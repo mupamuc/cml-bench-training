@@ -6,6 +6,32 @@
 <title>CML-Bench® — Сценарий «Первое виртуальное испытание»</title>
 <style>
   :root{
+    /* СВЕТЛАЯ ТЕМА — по умолчанию */
+    --bg: oklch(98.5% 0.003 250);
+    --surface: oklch(100% 0 0);
+    --surface-2: oklch(97.5% 0.005 255);
+    --line: oklch(90% 0.008 255);
+    --text: oklch(24% 0.02 255);
+    --muted: oklch(48% 0.02 255);
+    --accent: oklch(52% 0.16 245);
+    --accent-2: oklch(50% 0.13 160);
+    --warn: oklch(56% 0.15 60);
+    --danger: oklch(55% 0.2 25);
+    --glow1: oklch(72% 0.1 230 / .10);
+    --logo-ink: oklch(100% 0 0);
+    --brief-bg: oklch(96% 0.03 240);
+    --pill-active-bg: oklch(95% 0.035 240);
+    --grid-line: oklch(20% 0 0 / .05);
+    --viz-from: oklch(98% 0.004 255);
+    --viz-to: oklch(95.5% 0.01 255);
+    --ok-bg: oklch(93% 0.07 155 / .55);
+    --bad-bg: oklch(93% 0.08 25 / .5);
+    --ok-soft: oklch(94% 0.06 155 / .5);
+    --warn-soft: oklch(95% 0.07 70 / .5);
+    --radius: 14px;
+    --ease: cubic-bezier(0.16,1,0.3,1);
+  }
+  :root[data-theme="dark"]{
     --bg: oklch(16% 0.02 250);
     --surface: oklch(24% 0.035 258);
     --surface-2: oklch(21% 0.03 255);
@@ -16,29 +42,38 @@
     --accent-2: oklch(78% 0.16 155);
     --warn: oklch(80% 0.15 75);
     --danger: oklch(68% 0.2 25);
-    --radius: 14px;
-    --ease: cubic-bezier(0.16,1,0.3,1);
+    --glow1: oklch(30% 0.08 230 / .4);
+    --logo-ink: oklch(18% .03 250);
+    --brief-bg: oklch(28% .05 225 /.4);
+    --pill-active-bg: oklch(30% .07 225 /.5);
+    --grid-line: oklch(100% 0 0 /.04);
+    --viz-from: oklch(26% .03 255);
+    --viz-to: oklch(18% .02 255);
+    --ok-bg: oklch(30% .09 155 /.3);
+    --bad-bg: oklch(30% .1 25 /.28);
+    --ok-soft: oklch(30% .08 155 /.18);
+    --warn-soft: oklch(30% .08 75 /.16);
   }
   *{box-sizing:border-box}
   html,body{margin:0;height:100%}
   body{background:
-      radial-gradient(1100px 700px at 85% -10%, oklch(30% 0.08 230 / .4), transparent 60%),
+      radial-gradient(1100px 700px at 85% -10%, var(--glow1), transparent 60%),
       var(--bg);
     color:var(--text);font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;line-height:1.45;-webkit-font-smoothing:antialiased}
   .app{max-width:1180px;margin:0 auto;padding:clamp(14px,2.5vw,28px)}
   header.top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px}
   .brand{display:flex;align-items:center;gap:12px}
   .logo{width:42px;height:42px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent-2));
-    display:grid;place-items:center;font-weight:800;color:oklch(18% .03 250);font-size:18px;box-shadow:0 8px 26px oklch(72% .17 220 /.35)}
+    display:grid;place-items:center;font-weight:800;color:var(--logo-ink);font-size:18px;box-shadow:0 8px 26px oklch(72% .17 220 /.35)}
   .brand h1{font-size:16.5px;margin:0}
   .brand p{margin:0;color:var(--muted);font-size:12px}
   .modeToggle{display:flex;gap:0;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--surface)}
   .modeToggle button{font:inherit;cursor:pointer;border:0;background:transparent;color:var(--muted);padding:8px 15px;font-size:12.5px;transition:.18s var(--ease)}
-  .modeToggle button.on{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:oklch(18% .03 250);font-weight:700}
+  .modeToggle button.on{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--logo-ink);font-weight:700}
   .badge{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:5px 11px}
 
   /* ТЗ / case brief — постоянно на экране, основа для размышления */
-  .brief{border:1px solid var(--accent);background:oklch(28% .05 225 /.4);border-radius:12px;padding:12px 15px;margin-bottom:14px;font-size:13.5px}
+  .brief{border:1px solid var(--accent);background:var(--brief-bg);border-radius:12px;padding:12px 15px;margin-bottom:14px;font-size:13.5px}
   .brief .bk{color:var(--accent);font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:11px;margin-right:8px}
   .brief b{color:var(--text)}
   .brief .spec{display:flex;gap:16px;flex-wrap:wrap;margin-top:7px;font-size:12.5px;color:var(--muted)}
@@ -76,31 +111,31 @@
   .tree{list-style:none;margin:0;padding:6px}
   .tree li{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:9px;font-size:13.5px;color:var(--muted);transition:.2s var(--ease)}
   .tree li .ic{width:18px;text-align:center;opacity:.8}
-  .tree li.active{background:oklch(30% .07 225 /.5);color:var(--text);box-shadow:inset 0 0 0 1px var(--accent)}
+  .tree li.active{background:var(--pill-active-bg);color:var(--text);box-shadow:inset 0 0 0 1px var(--accent)}
   .tree li.done{color:var(--text)}
   .tree li.done .ic{color:var(--accent-2)}
   .tree li.locked{opacity:.4}
 
   .stage{flex:1;display:flex;flex-direction:column}
   .viewport{flex:1;min-height:260px;border-radius:10px;margin:0;background:
-    radial-gradient(circle at 50% 40%, oklch(26% .03 255), oklch(18% .02 255));
+    radial-gradient(circle at 50% 40%, var(--viz-from), var(--viz-to));
     display:grid;place-items:center;position:relative;overflow:hidden;border:1px dashed var(--line)}
   .vp-grid{position:absolute;inset:0;background:
-    repeating-linear-gradient(90deg,oklch(100% 0 0 /.04) 0 1px,transparent 1px 40px),
-    repeating-linear-gradient(0deg,oklch(100% 0 0 /.04) 0 1px,transparent 1px 40px);pointer-events:none}
+    repeating-linear-gradient(90deg,var(--grid-line) 0 1px,transparent 1px 40px),
+    repeating-linear-gradient(0deg,var(--grid-line) 0 1px,transparent 1px 40px);pointer-events:none}
   .empty{color:var(--muted);font-size:13px;text-align:center;padding:0 14px}
   .reqtable{width:100%;border-collapse:collapse;font-size:13px}
   .reqtable td{border:1px solid var(--line);padding:8px 11px}
   .reqtable td:last-child{text-align:right;color:var(--accent-2);font-weight:700}
   .chain-blocks{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center}
-  .cblock{border:1px solid var(--accent);background:oklch(30% .06 225 /.5);border-radius:9px;padding:9px 13px;font-size:12.5px;font-weight:600}
+  .cblock{border:1px solid var(--accent);background:var(--pill-active-bg);border-radius:9px;padding:9px 13px;font-size:12.5px;font-weight:600}
   .cb-arrow{color:var(--accent);font-size:14px}
 
   .stepk{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700}
   .righttitle{font-size:17px;margin:4px 0 8px;font-weight:700}
-  .hint{border:1px solid var(--accent-2);background:oklch(30% .08 155 /.18);border-radius:10px;padding:11px 13px;font-size:13px;color:var(--text);margin-bottom:14px;display:flex;gap:9px}
+  .hint{border:1px solid var(--accent-2);background:var(--ok-soft);border-radius:10px;padding:11px 13px;font-size:13px;color:var(--text);margin-bottom:14px;display:flex;gap:9px}
   .hint .hi{color:var(--accent-2);flex:0 0 auto}
-  .examnote{border:1px solid var(--warn);background:oklch(30% .08 75 /.16);border-radius:10px;padding:10px 13px;font-size:12.5px;color:var(--text);margin-bottom:14px;display:flex;gap:9px}
+  .examnote{border:1px solid var(--warn);background:var(--warn-soft);border-radius:10px;padding:10px 13px;font-size:12.5px;color:var(--text);margin-bottom:14px;display:flex;gap:9px}
   .examnote .hi{color:var(--warn);flex:0 0 auto}
   .ctrls{display:flex;flex-direction:column;gap:9px}
   .grp-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin:6px 0 2px}
@@ -111,9 +146,9 @@
   button.act .al b{font-weight:600}
   button.act .ad{font-size:11.5px;color:var(--muted);line-height:1.3}
   button.act .tick{margin-left:auto;color:var(--accent-2);opacity:0;transition:.2s;flex:0 0 auto}
-  button.act.chosen{border-color:var(--accent-2);background:oklch(30% .09 155 /.3)}
+  button.act.chosen{border-color:var(--accent-2);background:var(--ok-bg)}
   button.act.chosen .tick{opacity:1}
-  button.act.badpick{border-color:var(--danger);background:oklch(30% .1 25 /.28)}
+  button.act.badpick{border-color:var(--danger);background:var(--bad-bg)}
   button.act:disabled{opacity:.5;cursor:not-allowed}
   .msg{font-size:12.5px;margin-top:12px;min-height:18px}
   .msg.err{color:var(--warn)}.msg.ok{color:var(--accent-2)}
@@ -127,7 +162,7 @@
   .nav{display:flex;gap:9px;margin-top:14px}
   button.btn{font:inherit;cursor:pointer;border-radius:10px;padding:11px 16px;border:1px solid var(--line);background:var(--surface-2);color:var(--text);transition:.18s var(--ease);flex:1}
   button.btn:hover:not(:disabled){border-color:var(--accent)}
-  button.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:oklch(18% .03 250);border:0;font-weight:700}
+  button.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--logo-ink);border:0;font-weight:700}
   button.btn:disabled{opacity:.4;cursor:not-allowed}
 
   .statusbar{margin-top:14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:10px 14px;display:flex;align-items:center;gap:12px;font-size:13px}
@@ -145,6 +180,10 @@
   .stresslegend{display:flex;gap:6px;justify-content:center;font-size:11px;color:var(--muted);margin-top:8px}
   .grade{font-size:42px;font-weight:800;line-height:1.1}
   @media(prefers-reduced-motion:reduce){*{animation:none!important}}
+  .ftr{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px;border-top:1px solid var(--line);padding-top:12px;color:var(--muted);font-size:12px}
+  .themeBtn{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--muted);
+    border-radius:999px;padding:7px 14px;font-size:12px;transition:.18s var(--ease);display:inline-flex;align-items:center;gap:7px}
+  .themeBtn:hover{border-color:var(--accent);color:var(--text)}
 </style>
 </head>
 <body>
@@ -200,6 +239,11 @@
     <span class="dotled"></span>
     <span id="statusText">Кластер: ожидание задачи</span>
     <span class="runbar" style="display:none" id="runbarWrap"><i id="runbar"></i></span>
+  </div>
+
+  <div class="ftr">
+    <button class="themeBtn" id="themeBtn" type="button">🌙 Тёмная тема</button>
+    <span>Макет · один HTML · офлайн · собрано в Claude Code</span>
   </div>
 </div>
 
@@ -496,6 +540,18 @@ function stepDone(){
 }
 
 render();
+
+/* theme toggle — светлая по умолчанию, тёмная по кнопке */
+(function(){
+  const root=document.documentElement, btn=document.getElementById("themeBtn");
+  let saved=null; try{saved=localStorage.getItem("cml-theme");}catch(e){}
+  function apply(t){
+    if(t==="dark"){root.setAttribute("data-theme","dark");btn.textContent="☀️ Светлая тема";}
+    else{root.removeAttribute("data-theme");btn.textContent="🌙 Тёмная тема";}
+  }
+  apply(saved==="dark"?"dark":"light");
+  btn.onclick=()=>{const dark=root.getAttribute("data-theme")!=="dark";apply(dark?"dark":"light");try{localStorage.setItem("cml-theme",dark?"dark":"light");}catch(e){}};
+})();
 </script>
 </body>
 </html>
