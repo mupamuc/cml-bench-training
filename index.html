@@ -32,7 +32,9 @@
     display:grid;place-items:center;font-weight:800;color:oklch(18% .03 250);font-size:18px;box-shadow:0 8px 26px oklch(72% .17 220 /.35)}
   .brand h1{font-size:16.5px;margin:0}
   .brand p{margin:0;color:var(--muted);font-size:12px}
-  .mode{font-size:12px;color:var(--accent-2);border:1px solid var(--accent-2);border-radius:999px;padding:6px 13px;background:oklch(30% .08 155 /.25)}
+  .modeToggle{display:flex;gap:0;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--surface)}
+  .modeToggle button{font:inherit;cursor:pointer;border:0;background:transparent;color:var(--muted);padding:8px 15px;font-size:12.5px;transition:.18s var(--ease)}
+  .modeToggle button.on{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:oklch(18% .03 250);font-weight:700}
   .badge{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:5px 11px}
 
   .progress{height:4px;background:var(--line);border-radius:4px;overflow:hidden;margin:0 0 14px}
@@ -46,9 +48,9 @@
     .brand h1{font-size:15px}.brand p{font-size:11px}
     .badge{display:none}
     .ws{display:flex;flex-direction:column;min-height:0;gap:12px}
-    .ws>.col:nth-child(1){order:3}   /* дерево вниз */
-    .ws>.col:nth-child(2){order:1}   /* вьюпорт вверх */
-    .ws>.col:nth-child(3){order:2}   /* действия посередине */
+    .ws>.col:nth-child(1){order:3}
+    .ws>.col:nth-child(2){order:1}
+    .ws>.col:nth-child(3){order:2}
     .viewport{min-height:190px}
     .col .cb{padding:12px}
     button.act{font-size:13px;padding:10px 12px}
@@ -63,7 +65,6 @@
   .col .ch{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:12px 14px;border-bottom:1px solid var(--line);font-weight:700}
   .col .cb{padding:14px}
 
-  /* tree */
   .tree{list-style:none;margin:0;padding:6px}
   .tree li{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:9px;font-size:13.5px;color:var(--muted);transition:.2s var(--ease)}
   .tree li .ic{width:18px;text-align:center;opacity:.8}
@@ -72,7 +73,6 @@
   .tree li.done .ic{color:var(--accent-2)}
   .tree li.locked{opacity:.4}
 
-  /* center viewport */
   .stage{flex:1;display:flex;flex-direction:column}
   .viewport{flex:1;min-height:260px;border-radius:10px;margin:0;background:
     radial-gradient(circle at 50% 40%, oklch(26% .03 255), oklch(18% .02 255));
@@ -88,19 +88,22 @@
   .cblock{border:1px solid var(--accent);background:oklch(30% .06 225 /.5);border-radius:9px;padding:9px 13px;font-size:12.5px;font-weight:600}
   .cb-arrow{color:var(--accent);font-size:14px}
 
-  /* right panel */
   .stepk{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700}
   .righttitle{font-size:17px;margin:4px 0 8px;font-weight:700}
   .hint{border:1px solid var(--accent-2);background:oklch(30% .08 155 /.18);border-radius:10px;padding:11px 13px;font-size:13px;color:var(--text);margin-bottom:14px;display:flex;gap:9px}
   .hint .hi{color:var(--accent-2);flex:0 0 auto}
+  .examnote{border:1px solid var(--warn);background:oklch(30% .08 75 /.16);border-radius:10px;padding:10px 13px;font-size:12.5px;color:var(--text);margin-bottom:14px;display:flex;gap:9px}
+  .examnote .hi{color:var(--warn);flex:0 0 auto}
   .ctrls{display:flex;flex-direction:column;gap:9px}
+  .grp-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin:6px 0 2px}
   button.act{font:inherit;cursor:pointer;text-align:left;border:1px solid var(--line);background:var(--surface-2);color:var(--text);
     border-radius:10px;padding:11px 13px;font-size:13.5px;transition:.18s var(--ease);display:flex;align-items:center;gap:10px}
   button.act:hover:not(:disabled){border-color:var(--accent);transform:translateY(-1px)}
   button.act .tick{margin-left:auto;color:var(--accent-2);opacity:0;transition:.2s}
   button.act.chosen{border-color:var(--accent-2);background:oklch(30% .09 155 /.3)}
   button.act.chosen .tick{opacity:1}
-  button.act:disabled{opacity:.45;cursor:not-allowed}
+  button.act.badpick{border-color:var(--danger);background:oklch(30% .1 25 /.28)}
+  button.act:disabled{opacity:.5;cursor:not-allowed}
   .msg{font-size:12.5px;margin-top:12px;min-height:18px}
   .msg.err{color:var(--warn)}.msg.ok{color:var(--accent-2)}
 
@@ -108,6 +111,7 @@
   .checklist li{font-size:12px;color:var(--muted);padding:4px 0;display:flex;gap:8px}
   .checklist li.done{color:var(--text)}.checklist li.done::before{content:"✓";color:var(--accent-2)}
   .checklist li:not(.done)::before{content:"○";color:var(--line)}
+  .errcount{font-size:12px;color:var(--warn);margin-top:8px}
 
   .nav{display:flex;gap:9px;margin-top:14px}
   button.btn{font:inherit;cursor:pointer;border-radius:10px;padding:11px 16px;border:1px solid var(--line);background:var(--surface-2);color:var(--text);transition:.18s var(--ease);flex:1}
@@ -115,7 +119,6 @@
   button.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:oklch(18% .03 250);border:0;font-weight:700}
   button.btn:disabled{opacity:.4;cursor:not-allowed}
 
-  /* status bar */
   .statusbar{margin-top:14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:10px 14px;display:flex;align-items:center;gap:12px;font-size:13px}
   .statusbar .dotled{width:9px;height:9px;border-radius:50%;background:var(--line)}
   .statusbar.run .dotled{background:var(--warn);box-shadow:0 0 10px var(--warn);animation:pulse 1s infinite}
@@ -124,12 +127,12 @@
   .runbar{flex:1;height:6px;background:var(--line);border-radius:6px;overflow:hidden}
   .runbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .25s linear}
 
-  /* model svg */
   .nodeSvg{filter:drop-shadow(0 6px 20px oklch(72% .17 220 /.35))}
   .resultcard{text-align:center}
   .resultcard .big{font-size:46px;font-weight:800;color:var(--accent-2);line-height:1}
   .resultcard .lbl{color:var(--muted);font-size:13px;margin:6px 0 14px}
   .stresslegend{display:flex;gap:6px;justify-content:center;font-size:11px;color:var(--muted);margin-top:8px}
+  .grade{font-size:46px;font-weight:800;line-height:1}
   @media(prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 </head>
@@ -143,30 +146,28 @@
         <p>«Первое виртуальное испытание узла» — пройдите задачу самостоятельно</p>
       </div>
     </div>
-    <div style="display:flex;gap:8px;align-items:center">
-      <div class="mode">Режим: Обучение</div>
-      <div class="badge">Макет · собрано в Claude Code</div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <div class="modeToggle" id="modeToggle">
+        <button data-mode="learn" class="on">Обучение</button>
+        <button data-mode="control">Контроль</button>
+      </div>
+      <div class="badge">Макет · Claude Code</div>
     </div>
   </header>
 
   <div class="progress"><i id="bar"></i></div>
 
   <div class="ws">
-    <!-- LEFT: project tree -->
     <div class="col">
       <div class="ch">Дерево проекта</div>
       <ul class="tree" id="tree"></ul>
     </div>
-
-    <!-- CENTER: viewport -->
     <div class="col stage">
       <div class="ch" id="stageTitle">Рабочая область</div>
       <div class="cb stage">
         <div class="viewport" id="viewport"><div class="vp-grid"></div><div class="empty">—</div></div>
       </div>
     </div>
-
-    <!-- RIGHT: actions -->
     <div class="col">
       <div class="ch">Что нужно сделать</div>
       <div class="cb" id="rightPanel"></div>
@@ -188,9 +189,9 @@ const TREE = [
   {id:"chain",ic:"⛓", name:"Расчётная цепочка"},
   {id:"run",  ic:"▶", name:"Запуск и результат"},
 ];
-
-const S = {step:0, reqs:[], modelLoaded:false, load:null, bc:null, chain:[], ran:false, decided:false};
 const CHAIN_ORDER = ["Препроцессинг","Решатель","Постобработка"];
+
+const S = {step:0, mode:"learn", reqs:[], model:null, load:null, bc:null, chain:[], ran:false, decided:false, errors:0, flagged:new Set()};
 
 const bar=document.getElementById("bar");
 const treeEl=document.getElementById("tree");
@@ -199,6 +200,18 @@ const right=document.getElementById("rightPanel");
 const stageTitle=document.getElementById("stageTitle");
 const statusbar=document.getElementById("statusbar");
 const statusText=document.getElementById("statusText");
+const TOTAL=TREE.length+1;
+const isExam=()=>S.mode==="control";
+
+function resetScenario(){Object.assign(S,{step:0,reqs:[],model:null,load:null,bc:null,chain:[],ran:false,decided:false,errors:0,flagged:new Set()});}
+document.querySelectorAll("#modeToggle button").forEach(b=>b.onclick=()=>{
+  if(S.mode===b.dataset.mode) { resetScenario(); render(); return; }
+  S.mode=b.dataset.mode;
+  document.querySelectorAll("#modeToggle button").forEach(x=>x.classList.toggle("on",x.dataset.mode===S.mode));
+  resetScenario();render();
+});
+
+function logErr(key){ if(!S.flagged.has(key)){S.flagged.add(key);S.errors++;} }
 
 function nodeSVG(opts={}){
   const load=opts.load, bc=opts.bc, stress=opts.stress;
@@ -215,14 +228,12 @@ function nodeSVG(opts={}){
       <stop offset="1" stop-color="oklch(70% .15 155)"/></linearGradient></defs>
   </svg>`;
 }
-
 function renderTree(){
   treeEl.innerHTML=TREE.map((n,i)=>{
     const cls = i===S.step ? "active" : i<S.step ? "done" : "locked";
     return `<li class="${cls}"><span class="ic">${n.ic}</span>${n.name}</li>`;
   }).join("");
 }
-
 function setStatus(state,text,pct){
   statusbar.className="statusbar"+(state?` ${state}`:"");
   statusText.textContent=text;
@@ -230,31 +241,32 @@ function setStatus(state,text,pct){
   if(pct==null){wrap.style.display="none";}
   else{wrap.style.display="";document.getElementById("runbar").style.width=pct+"%";}
 }
-
 function checklist(){
   const items=[
-    ["req","Требования занесены", S.reqs.length>=2],
-    ["model","Модель загружена", S.modelLoaded],
-    ["loads","Нагрузка и ГУ заданы", S.load&&S.bc],
-    ["chain","Цепочка собрана", S.chain.length===3],
-    ["run","Испытание проведено", S.ran],
+    ["Требования занесены", S.reqs.length>=2 && S.reqs.includes("Запас прочности")],
+    ["Модель загружена", !!S.model],
+    ["Нагрузка и ГУ заданы", S.load==="7 кН" && S.bc==="заделка"],
+    ["Цепочка собрана", S.chain.length===3],
+    ["Испытание проведено", S.ran],
   ];
-  return `<ul class="checklist">${items.map(([id,t,d])=>`<li class="${d?"done":""}">${t}</li>`).join("")}</ul>`;
+  const ec = isExam()? `<div class="errcount">Ошибок пока: ${S.errors}</div>`:"";
+  return `<ul class="checklist">${items.map(([t,d])=>`<li class="${d?"done":""}">${t}</li>`).join("")}</ul>${ec}`;
 }
 
-// ---- per-step renderers ----
 function render(){
   renderTree();
   bar.style.width=((S.step)/(TREE.length))*100+"%";
-  const fns=[stepReq,stepModel,stepLoads,stepChain,stepRun,stepDone];
-  fns[S.step]();
+  [stepReq,stepModel,stepLoads,stepChain,stepRun,stepDone][S.step]();
 }
 
-function rightShell(k,title,hint,ctrlsHTML,canNext){
+function rightShell(title,hint,ctrlsHTML,canNext){
+  const hintBlock = isExam()
+    ? `<div class="examnote"><span class="hi">◉</span><span>Режим контроля: подсказок нет, ошибки засчитываются.</span></div>`
+    : (hint?`<div class="hint"><span class="hi">💡</span><span>${hint}</span></div>`:"");
   right.innerHTML=`
-    <div class="stepk">Шаг ${Math.min(S.step+1,5)} / 5</div>
+    <div class="stepk">Шаг ${Math.min(S.step+1,5)} / 5 · ${isExam()?"контроль":"обучение"}</div>
     <div class="righttitle">${title}</div>
-    <div class="hint"><span class="hi">💡</span><span>${hint}</span></div>
+    ${hintBlock}
     <div class="ctrls">${ctrlsHTML}</div>
     <div class="msg" id="msg"></div>
     ${checklist()}
@@ -266,93 +278,124 @@ function rightShell(k,title,hint,ctrlsHTML,canNext){
   document.getElementById("next").onclick=canNext;
 }
 function msg(t,ok){const m=document.getElementById("msg");if(!m)return;m.className="msg "+(ok?"ok":"err");m.textContent=t;}
+// feedback for a wrong choice: learn explains, exam stays terse
+function wrong(key,learnText){ logErr(key); msg(isExam()? "✗ Ошибка зафиксирована." : "✗ "+learnText); if(isExam()) updateErr(); }
+function updateErr(){const e=right.querySelector(".errcount"); if(e) e.textContent="Ошибок пока: "+S.errors;}
 
+/* ---- STEP 1: requirements (multi-add, with decoy) ---- */
 function stepReq(){
   stageTitle.textContent="Матрица требований";
   viewport.innerHTML=`<div class="vp-grid"></div>`+(S.reqs.length
-    ? `<table class="reqtable">${S.reqs.map(r=>`<tr><td>${r.n}</td><td>${r.v}</td></tr>`).join("")}</table>`
+    ? `<table class="reqtable">${S.reqs.map(n=>`<tr><td>${n}</td><td>${REQVAL[n]||""}</td></tr>`).join("")}</table>`
     : `<div class="empty">Требования не заданы. Добавьте справа →</div>`);
-  const opts=[{n:"Масса узла",v:"≤ 12.0 кг"},{n:"Запас прочности",v:"≥ 1.5"},{n:"Ресурс",v:"≥ 10⁶ циклов"}];
+  const opts=[
+    {n:"Масса узла",ok:true},{n:"Запас прочности",ok:true},{n:"Ресурс",ok:true},
+    {n:"Цвет корпуса",ok:false}
+  ];
   const ctrls=opts.map((o,i)=>{
-    const chosen=S.reqs.find(r=>r.n===o.n);
-    return `<button class="act ${chosen?"chosen":""}" data-req="${i}">${o.n} · <span style="color:var(--accent-2)">${o.v}</span><span class="tick">✓</span></button>`;
+    const chosen=S.reqs.includes(o.n);
+    return `<button class="act ${chosen?"chosen":""}" data-i="${i}">${o.n}${REQVAL[o.n]?` · <span style="color:var(--accent-2)">${REQVAL[o.n]}</span>`:""}<span class="tick">✓</span></button>`;
   }).join("");
-  rightShell("","Занесите требования",
-    "Добавьте минимум 2 целевых показателя. Обязательно включите «Запас прочности ≥ 1.5» — по нему примем решение в конце.",
+  rightShell("Занесите требования",
+    "Добавьте минимум 2 целевых показателя, обязательно «Запас прочности ≥ 1.5». Лишнее (напр. цвет) — не инженерное требование.",
     ctrls, ()=>{
-      if(S.reqs.length<2) return msg("Добавьте минимум 2 требования.");
-      if(!S.reqs.find(r=>r.n==="Запас прочности")) return msg("Без «Запаса прочности» не по чему оценивать результат.");
+      if(!S.reqs.includes("Запас прочности")) return msg(isExam()?"Проверьте состав требований.":"Без «Запаса прочности» нечего оценивать в конце.");
+      if(S.reqs.length<2) return msg(isExam()?"Недостаточно требований.":"Добавьте минимум 2 требования.");
       S.step=1;render();
     });
-  right.querySelectorAll("[data-req]").forEach(b=>b.onclick=()=>{
-    const o=opts[+b.dataset.req];const ex=S.reqs.findIndex(r=>r.n===o.n);
-    if(ex>=0)S.reqs.splice(ex,1);else S.reqs.push(o);stepReq();
+  right.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{
+    const o=opts[+b.dataset.i];
+    if(!o.ok){ wrong("req:"+o.n, "«"+o.n+"» — не расчётное требование, не добавляйте."); return; }
+    const ix=S.reqs.indexOf(o.n); if(ix>=0)S.reqs.splice(ix,1); else S.reqs.push(o.n);
+    stepReq();
   });
 }
+const REQVAL={"Масса узла":"≤ 12.0 кг","Запас прочности":"≥ 1.5","Ресурс":"≥ 10⁶ циклов"};
 
+/* ---- STEP 2: model (pick one of three) ---- */
 function stepModel(){
   stageTitle.textContent="Цифровой макет (DMU)";
-  viewport.innerHTML=`<div class="vp-grid"></div>`+(S.modelLoaded?nodeSVG():`<div class="empty">Модель не загружена</div>`);
-  const ctrls=`<button class="act ${S.modelLoaded?"chosen":""}" id="loadModel">${S.modelLoaded?"Модель «Кронштейн_v1» загружена":"Загрузить модель «Кронштейн_v1»"}<span class="tick">✓</span></button>`;
-  rightShell("","Загрузите расчётную модель",
-    "К требованиям привязывается геометрия и конечно-элементная сетка. Загрузите модель — она появится во вьюпорте.",
-    ctrls, ()=>{ if(!S.modelLoaded) return msg("Сначала загрузите модель."); S.step=2;render(); });
-  const lm=document.getElementById("loadModel");
-  if(lm) lm.onclick=()=>{S.modelLoaded=true;stepModel();msg("Модель загружена и привязана к проекту.",true);};
+  viewport.innerHTML=`<div class="vp-grid"></div>`+(S.model==="Кронштейн_v1"?nodeSVG():`<div class="empty">${S.model?("Загружена не та модель: "+S.model):"Модель не загружена"}</div>`);
+  const opts=[
+    {n:"Кронштейн_v1",ok:true},
+    {n:"Корпус_редуктора",ok:false},
+    {n:"Пустой шаблон",ok:false},
+  ];
+  const ctrls=opts.map((o,i)=>`<button class="act ${S.model===o.n?(o.ok?"chosen":"badpick"):""}" data-i="${i}">Загрузить: ${o.n}<span class="tick">✓</span></button>`).join("");
+  rightShell("Загрузите расчётную модель",
+    "Для этого кейса нужен «Кронштейн_v1». Другие модели не соответствуют требованиям.",
+    ctrls, ()=>{ if(S.model!=="Кронштейн_v1") return msg(isExam()?"Загружена неверная модель.":"Нужна модель «Кронштейн_v1»."); S.step=2;render(); });
+  right.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{
+    const o=opts[+b.dataset.i];
+    if(!o.ok){ S.model=o.n; wrong("model:"+o.n,"«"+o.n+"» не подходит под кейс — нужен кронштейн."); stepModelMark(); return; }
+    S.model=o.n; msg("Модель загружена и привязана к проекту.",true); stepModel();
+  });
 }
+function stepModelMark(){ stepModel(); }
 
+/* ---- STEP 3: loads + BC (two pick-one groups, with wrong options) ---- */
 function stepLoads(){
   stageTitle.textContent="Нагрузки и граничные условия";
-  viewport.innerHTML=`<div class="vp-grid"></div>`+nodeSVG({load:S.load,bc:S.bc});
-  const ctrls=`
-    <button class="act ${S.load?"chosen":""}" id="setLoad">Приложить нагрузку: сила 7 кН<span class="tick">✓</span></button>
-    <button class="act ${S.bc?"chosen":""}" id="setBC">Задать граничное условие: заделка<span class="tick">✓</span></button>`;
-  rightShell("","Задайте нагрузку и закрепление",
-    "Нужны ОБА условия. Нагрузка без закрепления = деталь «улетает», расчёт не сходится. Это частая ошибка новичка.",
+  viewport.innerHTML=`<div class="vp-grid"></div>`+nodeSVG({load:S.load==="7 кН",bc:S.bc==="заделка"});
+  const loads=[{n:"7 кН",ok:true},{n:"70 кН",ok:false},{n:"Момент 5 Н·м",ok:false}];
+  const bcs=[{n:"заделка",ok:true},{n:"шарнир",ok:false},{n:"без закрепления",ok:false}];
+  const grp=(title,arr,sel,kind)=>`<div class="grp-label">${title}</div>`+arr.map((o,i)=>
+    `<button class="act ${sel===o.n?(o.ok?"chosen":"badpick"):""}" data-kind="${kind}" data-i="${i}">${kind==="load"?"Нагрузка":"ГУ"}: ${o.n}<span class="tick">✓</span></button>`).join("");
+  const ctrls=grp("Нагрузка",loads,S.load,"load")+grp("Закрепление",bcs,S.bc,"bc");
+  rightShell("Задайте нагрузку и закрепление",
+    "Нужны ОБА верных: сила 7 кН и заделка. Нагрузка без закрепления = деталь не зафиксирована, расчёт не сойдётся.",
     ctrls, ()=>{
-      if(S.load&&!S.bc) return msg("Без граничного условия (заделки) расчёт не сойдётся — деталь не закреплена.");
-      if(!S.load&&S.bc) return msg("Не приложена нагрузка — нечего считать.");
-      if(!S.load&&!S.bc) return msg("Задайте нагрузку и закрепление.");
+      if(S.load!=="7 кН"||S.bc!=="заделка") return msg(isExam()?"Условия заданы неверно.":"Нужны сила 7 кН и заделка.");
       S.step=3;render();
     });
-  document.getElementById("setLoad").onclick=()=>{S.load=true;stepLoads();};
-  document.getElementById("setBC").onclick=()=>{S.bc=true;stepLoads();};
+  right.querySelectorAll("[data-kind]").forEach(b=>b.onclick=()=>{
+    const kind=b.dataset.kind, arr=kind==="load"?loads:bcs, o=arr[+b.dataset.i];
+    if(kind==="load") S.load=o.n; else S.bc=o.n;
+    if(!o.ok){ wrong(kind+":"+o.n, o.n==="без закрепления"?"Без закрепления деталь не зафиксирована — расчёт не сойдётся.":"«"+o.n+"» не подходит для этого кейса."); stepLoadsMark(); }
+    else { msg("Принято: "+o.n,true); stepLoadsMark(); }
+  });
 }
+function stepLoadsMark(){ stepLoads(); }
 
+/* ---- STEP 4: chain order (with decoy block) ---- */
 function stepChain(){
   stageTitle.textContent="Сборка расчётной цепочки";
   viewport.innerHTML=`<div class="vp-grid"></div>`+(S.chain.length
     ? `<div class="chain-blocks">${S.chain.map((c,i)=>`${i?'<span class="cb-arrow">→</span>':''}<div class="cblock">${c}</div>`).join("")}</div>`
     : `<div class="empty">Цепочка пуста. Соберите по порядку →</div>`);
   const next=CHAIN_ORDER[S.chain.length];
-  const ctrls=CHAIN_ORDER.map(c=>{
-    const added=S.chain.includes(c);
-    return `<button class="act ${added?"chosen":""}" data-block="${c}" ${added?"disabled":""}>${c}<span class="tick">✓</span></button>`;
+  const blocks=[
+    {n:"Препроцессинг",ok:true},{n:"Решатель",ok:true},{n:"Постобработка",ok:true},
+    {n:"Оптимизация",ok:false}
+  ];
+  const ctrls=blocks.map((b,i)=>{
+    const added=S.chain.includes(b.n);
+    return `<button class="act ${added?"chosen":""}" data-i="${i}" ${added?"disabled":""}>${b.n}<span class="tick">✓</span></button>`;
   }).join("");
-  rightShell("","Соберите цепочку по порядку",
-    "Порядок строгий: Препроцессинг → Решатель → Постобработка. Платформа прогонит её на кластере автоматически.",
-    ctrls, ()=>{ if(S.chain.length<3) return msg("Соберите все три блока по порядку."); S.step=4;render(); });
-  right.querySelectorAll("[data-block]").forEach(b=>b.onclick=()=>{
-    const c=b.dataset.block;
-    if(c!==next){ msg(`Сначала добавьте «${next}» — порядок цепочки важен.`); return; }
-    S.chain.push(c);stepChain();
+  rightShell("Соберите цепочку по порядку",
+    "Строгий порядок: Препроцессинг → Решатель → Постобработка. «Оптимизация» в базовую цепочку не входит.",
+    ctrls, ()=>{ if(S.chain.length<3) return msg(isExam()?"Цепочка не собрана.":"Соберите три блока по порядку."); S.step=4;render(); });
+  right.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{
+    const blk=blocks[+b.dataset.i];
+    if(!blk.ok){ wrong("chain:opt","«Оптимизация» не входит в базовую расчётную цепочку."); return; }
+    if(blk.n!==next){ wrong("chain:order:"+blk.n,"Сначала «"+next+"» — порядок цепочки важен."); return; }
+    S.chain.push(blk.n); stepChain();
   });
 }
 
+/* ---- STEP 5: run + decision ---- */
 let runTimer=null;
 function stepRun(){
   stageTitle.textContent="Виртуальное испытание";
   if(!S.ran){
     viewport.innerHTML=`<div class="vp-grid"></div>`+nodeSVG({load:true,bc:true});
     const ctrls=`<button class="act" id="runBtn">▶ Запустить на кластере (${S.chain.length} блока)<span class="tick">✓</span></button>`;
-    rightShell("","Запустите расчёт",
-      "Цепочка уходит на HPC-кластер: сотни ядер вместо натурного образца. Нажмите «Запустить» и дождитесь результата.",
-      ctrls, ()=>{ if(!S.ran) return msg("Запустите расчёт и дождитесь результата."); });
+    rightShell("Запустите расчёт",
+      "Цепочка уходит на HPC-кластер. Нажмите «Запустить» и дождитесь результата.",
+      ctrls, ()=>{ if(!S.ran) return msg(isExam()?"Расчёт не проведён.":"Запустите расчёт и дождитесь результата."); });
     document.getElementById("runBtn").onclick=startRun;
     setStatus("","Кластер: готов к запуску");
-  } else {
-    renderResult();
-  }
+  } else { renderResult(); }
 }
 function startRun(){
   const btn=document.getElementById("runBtn");if(btn)btn.disabled=true;
@@ -368,38 +411,64 @@ function startRun(){
 function renderResult(){
   viewport.innerHTML=`<div class="vp-grid"></div>`+nodeSVG({load:true,bc:true,stress:true})+
     `<div class="stresslegend" style="position:absolute;bottom:10px">низкие&nbsp;⟶&nbsp;высокие напряжения</div>`;
-  const safety=1.62;
-  rightShell("","Результат и решение",
-    "Поле напряжений рассчитано. Сравните запас прочности с требованием ≥ 1.5 и примите решение.",
-    `<div class="resultcard">
-        <div class="big">${safety.toFixed(2)}</div>
-        <div class="lbl">фактический запас прочности (требование ≥ 1.5)</div>
-        <button class="act" id="decide" style="justify-content:center;font-weight:700">Принять решение: вариант проходит ✓<span class="tick"></span></button>
-     </div>`,
-    ()=>{ if(!S.decided) return msg("Примите решение по результату."); S.step=5;render(); });
+  const decideOpts=[
+    {n:"Вариант проходит ✓",ok:true},
+    {n:"Вариант не проходит ✗",ok:false},
+  ];
+  const ctrls=`<div class="grp-label">Запас 1.62 при требовании ≥ 1.5 — ваше решение:</div>`+
+    decideOpts.map((o,i)=>`<button class="act ${S.decided&&o.ok?"chosen":""}" data-i="${i}" style="justify-content:center;font-weight:700">${o.n}</button>`).join("");
+  rightShell("Результат и решение",
+    "Запас 1.62 ≥ требования 1.5 → конструкция проходит. Выберите верное решение.",
+    `<div class="resultcard"><div class="big">1.62</div><div class="lbl">фактический запас прочности (требование ≥ 1.5)</div></div>`+ctrls,
+    ()=>{ if(!S.decided) return msg(isExam()?"Решение не принято.":"Примите верное решение по результату."); S.step=5;render(); });
   setStatus("ok","Кластер: расчёт завершён · запас 1.62 ≥ 1.5");
-  const d=document.getElementById("decide");
-  if(d)d.onclick=()=>{S.decided=true;d.classList.add("chosen");msg("Решение принято: запас 1.62 ≥ 1.5 — конструкция проходит. Жмите «Дальше».",true);};
+  right.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{
+    const o=decideOpts[+b.dataset.i];
+    if(!o.ok){ wrong("decide","1.62 ≥ 1.5 — вариант проходит, а не отклоняется."); return; }
+    S.decided=true; msg("Решение принято: запас 1.62 ≥ 1.5 — проходит. Жмите «Дальше».",true); renderResult();
+  });
 }
 
+/* ---- FINISH ---- */
 function stepDone(){
   renderTree();bar.style.width="100%";
   stageTitle.textContent="Задача выполнена";
+  if(isExam()){
+    const grades=[["Отлично (5)","var(--accent-2)"],["Хорошо (4)","var(--accent-2)"],["Удовлетворительно (3)","var(--warn)"]];
+    const g = S.errors<=0?grades[0]:S.errors===1?grades[1]:S.errors===2?grades[2]:["Требуется повторное обучение","var(--danger)"];
+    viewport.innerHTML=`<div class="vp-grid"></div><div style="text-align:center">
+      <div class="grade" style="color:${g[1]}">${g[0]}</div>
+      <div style="color:var(--muted);font-size:13px;margin-top:8px">Ошибок: <b style="color:var(--text)">${S.errors}</b> · без подсказок</div></div>`;
+    right.innerHTML=`
+      <div class="stepk">Итог · контроль</div>
+      <div class="righttitle">Оценка компетенции</div>
+      ${checklist()}
+      <div class="examnote" style="margin-top:14px"><span class="hi">◉</span><span>Результат без подсказок: <b>${S.errors}</b> ошибок. Так модуль годится как проверка при онбординге.</span></div>
+      <div class="nav">
+        <button class="btn" id="toLearn">↩ В обучение</button>
+        <button class="btn primary" id="restart">↻ Заново</button>
+      </div>`;
+    document.getElementById("toLearn").onclick=()=>{document.querySelector('#modeToggle [data-mode="learn"]').click();};
+    document.getElementById("restart").onclick=()=>{resetScenario();render();};
+    setStatus("ok","Кластер: задача закрыта · ошибок "+S.errors);
+    return;
+  }
   viewport.innerHTML=`<div class="vp-grid"></div><div style="text-align:center">
       <div style="font-size:50px">✓</div>
       <div style="font-size:18px;font-weight:700;margin-top:6px">Сценарий пройден</div>
       <div style="color:var(--muted);font-size:13px;margin-top:6px">Первое виртуальное испытание проведено<br/>от требования до обоснованного решения</div>
     </div>`;
   right.innerHTML=`
-    <div class="stepk">Итог</div>
+    <div class="stepk">Итог · обучение</div>
     <div class="righttitle">Что вы освоили</div>
     ${checklist()}
-    <div class="hint" style="margin-top:14px"><span class="hi">▶</span><span>В режиме <b>Контроль</b> подсказки скрыты, а действия оцениваются — годится как проверка компетенции при онбординге.</span></div>
-    <div style="font-size:12.5px;color:var(--muted);margin:12px 0">Так же быстро Claude Code соберёт сценарий под любой модуль и реальные экраны CML-Bench.</div>
-    <div class="nav"><button class="btn primary" id="restart">↻ Пройти заново</button></div>`;
-  document.getElementById("restart").onclick=()=>{
-    Object.assign(S,{step:0,reqs:[],modelLoaded:false,load:null,bc:null,chain:[],ran:false,decided:false});render();
-  };
+    <div class="examnote" style="margin-top:14px"><span class="hi">◉</span><span>Готовы? Переключитесь в <b>Контроль</b> — там подсказки скрыты, а ошибки оцениваются.</span></div>
+    <div class="nav">
+      <button class="btn" id="toExam">▶ Режим контроля</button>
+      <button class="btn primary" id="restart">↻ Заново</button>
+    </div>`;
+  document.getElementById("toExam").onclick=()=>{document.querySelector('#modeToggle [data-mode="control"]').click();};
+  document.getElementById("restart").onclick=()=>{resetScenario();render();};
   setStatus("ok","Кластер: задача закрыта");
 }
 
