@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CML-Bench® — Сценарий «Первое виртуальное испытание»</title>
+<style>
+  :root{
+    --bg: oklch(16% 0.02 250);
+    --surface: oklch(24% 0.035 258);
+    --surface-2: oklch(21% 0.03 255);
+    --line: oklch(38% 0.04 258);
+    --text: oklch(96% 0.01 250);
+    --muted: oklch(72% 0.02 255);
+    --accent: oklch(72% 0.17 220);
+    --accent-2: oklch(78% 0.16 155);
+    --warn: oklch(80% 0.15 75);
+    --danger: oklch(68% 0.2 25);
+    --radius: 14px;
+    --ease: cubic-bezier(0.16,1,0.3,1);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:
+      radial-gradient(1100px 700px at 85% -10%, oklch(30% 0.08 230 / .4), transparent 60%),
+      var(--bg);
+    color:var(--text);font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;line-height:1.45;-webkit-font-smoothing:antialiased}
+  .app{max-width:1180px;margin:0 auto;padding:clamp(14px,2.5vw,28px)}
+  header.top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:42px;height:42px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    display:grid;place-items:center;font-weight:800;color:oklch(18% .03 250);font-size:18px;box-shadow:0 8px 26px oklch(72% .17 220 /.35)}
+  .brand h1{font-size:16.5px;margin:0}
+  .brand p{margin:0;color:var(--muted);font-size:12px}
+  .mode{font-size:12px;color:var(--accent-2);border:1px solid var(--accent-2);border-radius:999px;padding:6px 13px;background:oklch(30% .08 155 /.25)}
+  .badge{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:5px 11px}
+
+  .progress{height:4px;background:var(--line);border-radius:4px;overflow:hidden;margin:0 0 14px}
+  .progress i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0;transition:width .45s var(--ease)}
+
+  .ws{display:grid;grid-template-columns:230px 1fr 320px;gap:14px;min-height:440px}
+  @media(max-width:900px){.ws{grid-template-columns:1fr}}
+  @media(max-width:560px){
+    .app{padding:14px}
+    header.top{gap:9px}
+    .brand h1{font-size:15px}.brand p{font-size:11px}
+    .badge{display:none}
+    .ws{display:flex;flex-direction:column;min-height:0;gap:12px}
+    .ws>.col:nth-child(1){order:3}   /* дерево вниз */
+    .ws>.col:nth-child(2){order:1}   /* вьюпорт вверх */
+    .ws>.col:nth-child(3){order:2}   /* действия посередине */
+    .viewport{min-height:190px}
+    .col .cb{padding:12px}
+    button.act{font-size:13px;padding:10px 12px}
+    .nav{flex-wrap:wrap}
+    button.btn{flex:1 1 100%}
+    .statusbar{flex-wrap:wrap;font-size:12px;gap:9px}
+    .runbar{flex:1 1 100%;order:3}
+    .righttitle{font-size:16px}
+    .resultcard .big{font-size:38px}
+  }
+  .col{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);overflow:hidden;display:flex;flex-direction:column}
+  .col .ch{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:12px 14px;border-bottom:1px solid var(--line);font-weight:700}
+  .col .cb{padding:14px}
+
+  /* tree */
+  .tree{list-style:none;margin:0;padding:6px}
+  .tree li{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:9px;font-size:13.5px;color:var(--muted);transition:.2s var(--ease)}
+  .tree li .ic{width:18px;text-align:center;opacity:.8}
+  .tree li.active{background:oklch(30% .07 225 /.5);color:var(--text);box-shadow:inset 0 0 0 1px var(--accent)}
+  .tree li.done{color:var(--text)}
+  .tree li.done .ic{color:var(--accent-2)}
+  .tree li.locked{opacity:.4}
+
+  /* center viewport */
+  .stage{flex:1;display:flex;flex-direction:column}
+  .viewport{flex:1;min-height:260px;border-radius:10px;margin:0;background:
+    radial-gradient(circle at 50% 40%, oklch(26% .03 255), oklch(18% .02 255));
+    display:grid;place-items:center;position:relative;overflow:hidden;border:1px dashed var(--line)}
+  .vp-grid{position:absolute;inset:0;background:
+    repeating-linear-gradient(90deg,oklch(100% 0 0 /.04) 0 1px,transparent 1px 40px),
+    repeating-linear-gradient(0deg,oklch(100% 0 0 /.04) 0 1px,transparent 1px 40px);pointer-events:none}
+  .empty{color:var(--muted);font-size:13px}
+  .reqtable{width:100%;border-collapse:collapse;font-size:13px}
+  .reqtable td{border:1px solid var(--line);padding:8px 11px}
+  .reqtable td:last-child{text-align:right;color:var(--accent-2);font-weight:700}
+  .chain-blocks{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center}
+  .cblock{border:1px solid var(--accent);background:oklch(30% .06 225 /.5);border-radius:9px;padding:9px 13px;font-size:12.5px;font-weight:600}
+  .cb-arrow{color:var(--accent);font-size:14px}
+
+  /* right panel */
+  .stepk{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700}
+  .righttitle{font-size:17px;margin:4px 0 8px;font-weight:700}
+  .hint{border:1px solid var(--accent-2);background:oklch(30% .08 155 /.18);border-radius:10px;padding:11px 13px;font-size:13px;color:var(--text);margin-bottom:14px;display:flex;gap:9px}
+  .hint .hi{color:var(--accent-2);flex:0 0 auto}
+  .ctrls{display:flex;flex-direction:column;gap:9px}
+  button.act{font:inherit;cursor:pointer;text-align:left;border:1px solid var(--line);background:var(--surface-2);color:var(--text);
+    border-radius:10px;padding:11px 13px;font-size:13.5px;transition:.18s var(--ease);display:flex;align-items:center;gap:10px}
+  button.act:hover:not(:disabled){border-color:var(--accent);transform:translateY(-1px)}
+  button.act .tick{margin-left:auto;color:var(--accent-2);opacity:0;transition:.2s}
+  button.act.chosen{border-color:var(--accent-2);background:oklch(30% .09 155 /.3)}
+  button.act.chosen .tick{opacity:1}
+  button.act:disabled{opacity:.45;cursor:not-allowed}
+  .msg{font-size:12.5px;margin-top:12px;min-height:18px}
+  .msg.err{color:var(--warn)}.msg.ok{color:var(--accent-2)}
+
+  .checklist{list-style:none;padding:0;margin:14px 0 0;border-top:1px solid var(--line);padding-top:12px}
+  .checklist li{font-size:12px;color:var(--muted);padding:4px 0;display:flex;gap:8px}
+  .checklist li.done{color:var(--text)}.checklist li.done::before{content:"✓";color:var(--accent-2)}
+  .checklist li:not(.done)::before{content:"○";color:var(--line)}
+
+  .nav{display:flex;gap:9px;margin-top:14px}
+  button.btn{font:inherit;cursor:pointer;border-radius:10px;padding:11px 16px;border:1px solid var(--line);background:var(--surface-2);color:var(--text);transition:.18s var(--ease);flex:1}
+  button.btn:hover:not(:disabled){border-color:var(--accent)}
+  button.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:oklch(18% .03 250);border:0;font-weight:700}
+  button.btn:disabled{opacity:.4;cursor:not-allowed}
+
+  /* status bar */
+  .statusbar{margin-top:14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:10px 14px;display:flex;align-items:center;gap:12px;font-size:13px}
+  .statusbar .dotled{width:9px;height:9px;border-radius:50%;background:var(--line)}
+  .statusbar.run .dotled{background:var(--warn);box-shadow:0 0 10px var(--warn);animation:pulse 1s infinite}
+  .statusbar.ok .dotled{background:var(--accent-2);box-shadow:0 0 10px var(--accent-2)}
+  @keyframes pulse{50%{opacity:.4}}
+  .runbar{flex:1;height:6px;background:var(--line);border-radius:6px;overflow:hidden}
+  .runbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .25s linear}
+
+  /* model svg */
+  .nodeSvg{filter:drop-shadow(0 6px 20px oklch(72% .17 220 /.35))}
+  .resultcard{text-align:center}
+  .resultcard .big{font-size:46px;font-weight:800;color:var(--accent-2);line-height:1}
+  .resultcard .lbl{color:var(--muted);font-size:13px;margin:6px 0 14px}
+  .stresslegend{display:flex;gap:6px;justify-content:center;font-size:11px;color:var(--muted);margin-top:8px}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <div class="logo">CB</div>
+      <div>
+        <h1>CML-Bench® · Сценарий обучения</h1>
+        <p>«Первое виртуальное испытание узла» — пройдите задачу самостоятельно</p>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div class="mode">Режим: Обучение</div>
+      <div class="badge">Макет · собрано в Claude Code</div>
+    </div>
+  </header>
+
+  <div class="progress"><i id="bar"></i></div>
+
+  <div class="ws">
+    <!-- LEFT: project tree -->
+    <div class="col">
+      <div class="ch">Дерево проекта</div>
+      <ul class="tree" id="tree"></ul>
+    </div>
+
+    <!-- CENTER: viewport -->
+    <div class="col stage">
+      <div class="ch" id="stageTitle">Рабочая область</div>
+      <div class="cb stage">
+        <div class="viewport" id="viewport"><div class="vp-grid"></div><div class="empty">—</div></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: actions -->
+    <div class="col">
+      <div class="ch">Что нужно сделать</div>
+      <div class="cb" id="rightPanel"></div>
+    </div>
+  </div>
+
+  <div class="statusbar" id="statusbar">
+    <span class="dotled"></span>
+    <span id="statusText">Кластер: ожидание задачи</span>
+    <span class="runbar" style="display:none" id="runbarWrap"><i id="runbar"></i></span>
+  </div>
+</div>
+
+<script>
+const TREE = [
+  {id:"req",  ic:"▤", name:"Требования"},
+  {id:"model",ic:"◈", name:"Модель"},
+  {id:"loads",ic:"↯", name:"Нагрузки и ГУ"},
+  {id:"chain",ic:"⛓", name:"Расчётная цепочка"},
+  {id:"run",  ic:"▶", name:"Запуск и результат"},
+];
+
+const S = {step:0, reqs:[], modelLoaded:false, load:null, bc:null, chain:[], ran:false, decided:false};
+const CHAIN_ORDER = ["Препроцессинг","Решатель","Постобработка"];
+
+const bar=document.getElementById("bar");
+const treeEl=document.getElementById("tree");
+const viewport=document.getElementById("viewport");
+const right=document.getElementById("rightPanel");
+const stageTitle=document.getElementById("stageTitle");
+const statusbar=document.getElementById("statusbar");
+const statusText=document.getElementById("statusText");
+
+function nodeSVG(opts={}){
+  const load=opts.load, bc=opts.bc, stress=opts.stress;
+  return `<svg width="240" height="200" viewBox="0 0 240 200" class="nodeSvg" xmlns="http://www.w3.org/2000/svg">
+    ${bc?`<rect x="20" y="40" width="14" height="120" fill="oklch(45% .04 258)"/>
+      ${[50,75,100,125,150].map(y=>`<line x1="20" y1="${y}" x2="10" y2="${y+8}" stroke="oklch(60% .03 258)" stroke-width="2"/>`).join("")}`:""}
+    <path d="M34 70 L150 70 Q170 70 170 90 L170 150 L140 150 L140 100 L34 100 Z"
+      fill="${stress?"url(#sg)":"oklch(40% .06 230)"}" stroke="oklch(72% .12 220)" stroke-width="2"/>
+    ${load?`<line x1="155" y1="20" x2="155" y2="62" stroke="var(--warn)" stroke-width="3"/>
+      <path d="M148 54 L155 66 L162 54 Z" fill="var(--warn)"/>
+      <text x="165" y="40" fill="var(--warn)" font-size="12" font-family="Segoe UI">7 кН</text>`:""}
+    <defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="oklch(60% .2 25)"/><stop offset=".5" stop-color="oklch(78% .16 75)"/>
+      <stop offset="1" stop-color="oklch(70% .15 155)"/></linearGradient></defs>
+  </svg>`;
+}
+
+function renderTree(){
+  treeEl.innerHTML=TREE.map((n,i)=>{
+    const cls = i===S.step ? "active" : i<S.step ? "done" : "locked";
+    return `<li class="${cls}"><span class="ic">${n.ic}</span>${n.name}</li>`;
+  }).join("");
+}
+
+function setStatus(state,text,pct){
+  statusbar.className="statusbar"+(state?` ${state}`:"");
+  statusText.textContent=text;
+  const wrap=document.getElementById("runbarWrap");
+  if(pct==null){wrap.style.display="none";}
+  else{wrap.style.display="";document.getElementById("runbar").style.width=pct+"%";}
+}
+
+function checklist(){
+  const items=[
+    ["req","Требования занесены", S.reqs.length>=2],
+    ["model","Модель загружена", S.modelLoaded],
+    ["loads","Нагрузка и ГУ заданы", S.load&&S.bc],
+    ["chain","Цепочка собрана", S.chain.length===3],
+    ["run","Испытание проведено", S.ran],
+  ];
+  return `<ul class="checklist">${items.map(([id,t,d])=>`<li class="${d?"done":""}">${t}</li>`).join("")}</ul>`;
+}
+
+// ---- per-step renderers ----
+function render(){
+  renderTree();
+  bar.style.width=((S.step)/(TREE.length))*100+"%";
+  const fns=[stepReq,stepModel,stepLoads,stepChain,stepRun,stepDone];
+  fns[S.step]();
+}
+
+function rightShell(k,title,hint,ctrlsHTML,canNext){
+  right.innerHTML=`
+    <div class="stepk">Шаг ${Math.min(S.step+1,5)} / 5</div>
+    <div class="righttitle">${title}</div>
+    <div class="hint"><span class="hi">💡</span><span>${hint}</span></div>
+    <div class="ctrls">${ctrlsHTML}</div>
+    <div class="msg" id="msg"></div>
+    ${checklist()}
+    <div class="nav">
+      <button class="btn" id="back" ${S.step===0?"disabled":""}>← Назад</button>
+      <button class="btn primary" id="next">Дальше →</button>
+    </div>`;
+  document.getElementById("back").onclick=()=>{S.step=Math.max(0,S.step-1);render();};
+  document.getElementById("next").onclick=canNext;
+}
+function msg(t,ok){const m=document.getElementById("msg");if(!m)return;m.className="msg "+(ok?"ok":"err");m.textContent=t;}
+
+function stepReq(){
+  stageTitle.textContent="Матрица требований";
+  viewport.innerHTML=`<div class="vp-grid"></div>`+(S.reqs.length
+    ? `<table class="reqtable">${S.reqs.map(r=>`<tr><td>${r.n}</td><td>${r.v}</td></tr>`).join("")}</table>`
+    : `<div class="empty">Требования не заданы. Добавьте справа →</div>`);
+  const opts=[{n:"Масса узла",v:"≤ 12.0 кг"},{n:"Запас прочности",v:"≥ 1.5"},{n:"Ресурс",v:"≥ 10⁶ циклов"}];
+  const ctrls=opts.map((o,i)=>{
+    const chosen=S.reqs.find(r=>r.n===o.n);
+    return `<button class="act ${chosen?"chosen":""}" data-req="${i}">${o.n} · <span style="color:var(--accent-2)">${o.v}</span><span class="tick">✓</span></button>`;
+  }).join("");
+  rightShell("","Занесите требования",
+    "Добавьте минимум 2 целевых показателя. Обязательно включите «Запас прочности ≥ 1.5» — по нему примем решение в конце.",
+    ctrls, ()=>{
+      if(S.reqs.length<2) return msg("Добавьте минимум 2 требования.");
+      if(!S.reqs.find(r=>r.n==="Запас прочности")) return msg("Без «Запаса прочности» не по чему оценивать результат.");
+      S.step=1;render();
+    });
+  right.querySelectorAll("[data-req]").forEach(b=>b.onclick=()=>{
+    const o=opts[+b.dataset.req];const ex=S.reqs.findIndex(r=>r.n===o.n);
+    if(ex>=0)S.reqs.splice(ex,1);else S.reqs.push(o);stepReq();
+  });
+}
+
+function stepModel(){
+  stageTitle.textContent="Цифровой макет (DMU)";
+  viewport.innerHTML=`<div class="vp-grid"></div>`+(S.modelLoaded?nodeSVG():`<div class="empty">Модель не загружена</div>`);
+  const ctrls=`<button class="act ${S.modelLoaded?"chosen":""}" id="loadModel">${S.modelLoaded?"Модель «Кронштейн_v1» загружена":"Загрузить модель «Кронштейн_v1»"}<span class="tick">✓</span></button>`;
+  rightShell("","Загрузите расчётную модель",
+    "К требованиям привязывается геометрия и конечно-элементная сетка. Загрузите модель — она появится во вьюпорте.",
+    ctrls, ()=>{ if(!S.modelLoaded) return msg("Сначала загрузите модель."); S.step=2;render(); });
+  const lm=document.getElementById("loadModel");
+  if(lm) lm.onclick=()=>{S.modelLoaded=true;stepModel();msg("Модель загружена и привязана к проекту.",true);};
+}
+
+function stepLoads(){
+  stageTitle.textContent="Нагрузки и граничные условия";
+  viewport.innerHTML=`<div class="vp-grid"></div>`+nodeSVG({load:S.load,bc:S.bc});
+  const ctrls=`
+    <button class="act ${S.load?"chosen":""}" id="setLoad">Приложить нагрузку: сила 7 кН<span class="tick">✓</span></button>
+    <button class="act ${S.bc?"chosen":""}" id="setBC">Задать граничное условие: заделка<span class="tick">✓</span></button>`;
+  rightShell("","Задайте нагрузку и закрепление",
+    "Нужны ОБА условия. Нагрузка без закрепления = деталь «улетает», расчёт не сходится. Это частая ошибка новичка.",
+    ctrls, ()=>{
+      if(S.load&&!S.bc) return msg("Без граничного условия (заделки) расчёт не сойдётся — деталь не закреплена.");
+      if(!S.load&&S.bc) return msg("Не приложена нагрузка — нечего считать.");
+      if(!S.load&&!S.bc) return msg("Задайте нагрузку и закрепление.");
+      S.step=3;render();
+    });
+  document.getElementById("setLoad").onclick=()=>{S.load=true;stepLoads();};
+  document.getElementById("setBC").onclick=()=>{S.bc=true;stepLoads();};
+}
+
+function stepChain(){
+  stageTitle.textContent="Сборка расчётной цепочки";
+  viewport.innerHTML=`<div class="vp-grid"></div>`+(S.chain.length
+    ? `<div class="chain-blocks">${S.chain.map((c,i)=>`${i?'<span class="cb-arrow">→</span>':''}<div class="cblock">${c}</div>`).join("")}</div>`
+    : `<div class="empty">Цепочка пуста. Соберите по порядку →</div>`);
+  const next=CHAIN_ORDER[S.chain.length];
+  const ctrls=CHAIN_ORDER.map(c=>{
+    const added=S.chain.includes(c);
+    return `<button class="act ${added?"chosen":""}" data-block="${c}" ${added?"disabled":""}>${c}<span class="tick">✓</span></button>`;
+  }).join("");
+  rightShell("","Соберите цепочку по порядку",
+    "Порядок строгий: Препроцессинг → Решатель → Постобработка. Платформа прогонит её на кластере автоматически.",
+    ctrls, ()=>{ if(S.chain.length<3) return msg("Соберите все три блока по порядку."); S.step=4;render(); });
+  right.querySelectorAll("[data-block]").forEach(b=>b.onclick=()=>{
+    const c=b.dataset.block;
+    if(c!==next){ msg(`Сначала добавьте «${next}» — порядок цепочки важен.`); return; }
+    S.chain.push(c);stepChain();
+  });
+}
+
+let runTimer=null;
+function stepRun(){
+  stageTitle.textContent="Виртуальное испытание";
+  if(!S.ran){
+    viewport.innerHTML=`<div class="vp-grid"></div>`+nodeSVG({load:true,bc:true});
+    const ctrls=`<button class="act" id="runBtn">▶ Запустить на кластере (${S.chain.length} блока)<span class="tick">✓</span></button>`;
+    rightShell("","Запустите расчёт",
+      "Цепочка уходит на HPC-кластер: сотни ядер вместо натурного образца. Нажмите «Запустить» и дождитесь результата.",
+      ctrls, ()=>{ if(!S.ran) return msg("Запустите расчёт и дождитесь результата."); });
+    document.getElementById("runBtn").onclick=startRun;
+    setStatus("","Кластер: готов к запуску");
+  } else {
+    renderResult();
+  }
+}
+function startRun(){
+  const btn=document.getElementById("runBtn");if(btn)btn.disabled=true;
+  let p=0;setStatus("run","Кластер: расчёт…",0);
+  viewport.innerHTML=`<div class="vp-grid"></div><div class="empty" id="runInfo">Расчёт напряжённо-деформированного состояния…</div>`;
+  runTimer=setInterval(()=>{
+    p+=Math.max(4, Math.round((100-p)*0.12));
+    if(p>=100){p=100;clearInterval(runTimer);S.ran=true;setStatus("ok","Кластер: расчёт завершён");renderResult();}
+    else setStatus("run",`Кластер: расчёт… ${p}%`,p);
+    const ri=document.getElementById("runInfo");if(ri&&p<100)ri.textContent=`Решатель FEA · ${p}%`;
+  },260);
+}
+function renderResult(){
+  viewport.innerHTML=`<div class="vp-grid"></div>`+nodeSVG({load:true,bc:true,stress:true})+
+    `<div class="stresslegend" style="position:absolute;bottom:10px">низкие&nbsp;⟶&nbsp;высокие напряжения</div>`;
+  const safety=1.62;
+  rightShell("","Результат и решение",
+    "Поле напряжений рассчитано. Сравните запас прочности с требованием ≥ 1.5 и примите решение.",
+    `<div class="resultcard">
+        <div class="big">${safety.toFixed(2)}</div>
+        <div class="lbl">фактический запас прочности (требование ≥ 1.5)</div>
+        <button class="act" id="decide" style="justify-content:center;font-weight:700">Принять решение: вариант проходит ✓<span class="tick"></span></button>
+     </div>`,
+    ()=>{ if(!S.decided) return msg("Примите решение по результату."); S.step=5;render(); });
+  setStatus("ok","Кластер: расчёт завершён · запас 1.62 ≥ 1.5");
+  const d=document.getElementById("decide");
+  if(d)d.onclick=()=>{S.decided=true;d.classList.add("chosen");msg("Решение принято: запас 1.62 ≥ 1.5 — конструкция проходит. Жмите «Дальше».",true);};
+}
+
+function stepDone(){
+  renderTree();bar.style.width="100%";
+  stageTitle.textContent="Задача выполнена";
+  viewport.innerHTML=`<div class="vp-grid"></div><div style="text-align:center">
+      <div style="font-size:50px">✓</div>
+      <div style="font-size:18px;font-weight:700;margin-top:6px">Сценарий пройден</div>
+      <div style="color:var(--muted);font-size:13px;margin-top:6px">Первое виртуальное испытание проведено<br/>от требования до обоснованного решения</div>
+    </div>`;
+  right.innerHTML=`
+    <div class="stepk">Итог</div>
+    <div class="righttitle">Что вы освоили</div>
+    ${checklist()}
+    <div class="hint" style="margin-top:14px"><span class="hi">▶</span><span>В режиме <b>Контроль</b> подсказки скрыты, а действия оцениваются — годится как проверка компетенции при онбординге.</span></div>
+    <div style="font-size:12.5px;color:var(--muted);margin:12px 0">Так же быстро Claude Code соберёт сценарий под любой модуль и реальные экраны CML-Bench.</div>
+    <div class="nav"><button class="btn primary" id="restart">↻ Пройти заново</button></div>`;
+  document.getElementById("restart").onclick=()=>{
+    Object.assign(S,{step:0,reqs:[],modelLoaded:false,load:null,bc:null,chain:[],ran:false,decided:false});render();
+  };
+  setStatus("ok","Кластер: задача закрыта");
+}
+
+render();
+</script>
+</body>
+</html>
