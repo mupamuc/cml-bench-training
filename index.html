@@ -37,6 +37,13 @@
   .modeToggle button.on{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:oklch(18% .03 250);font-weight:700}
   .badge{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:5px 11px}
 
+  /* ТЗ / case brief — постоянно на экране, основа для размышления */
+  .brief{border:1px solid var(--accent);background:oklch(28% .05 225 /.4);border-radius:12px;padding:12px 15px;margin-bottom:14px;font-size:13.5px}
+  .brief .bk{color:var(--accent);font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:11px;margin-right:8px}
+  .brief b{color:var(--text)}
+  .brief .spec{display:flex;gap:16px;flex-wrap:wrap;margin-top:7px;font-size:12.5px;color:var(--muted)}
+  .brief .spec span b{color:var(--accent-2)}
+
   .progress{height:4px;background:var(--line);border-radius:4px;overflow:hidden;margin:0 0 14px}
   .progress i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0;transition:width .45s var(--ease)}
 
@@ -47,6 +54,7 @@
     header.top{gap:9px}
     .brand h1{font-size:15px}.brand p{font-size:11px}
     .badge{display:none}
+    .brief .spec{gap:10px}
     .ws{display:flex;flex-direction:column;min-height:0;gap:12px}
     .ws>.col:nth-child(1){order:3}
     .ws>.col:nth-child(2){order:1}
@@ -80,7 +88,7 @@
   .vp-grid{position:absolute;inset:0;background:
     repeating-linear-gradient(90deg,oklch(100% 0 0 /.04) 0 1px,transparent 1px 40px),
     repeating-linear-gradient(0deg,oklch(100% 0 0 /.04) 0 1px,transparent 1px 40px);pointer-events:none}
-  .empty{color:var(--muted);font-size:13px}
+  .empty{color:var(--muted);font-size:13px;text-align:center;padding:0 14px}
   .reqtable{width:100%;border-collapse:collapse;font-size:13px}
   .reqtable td{border:1px solid var(--line);padding:8px 11px}
   .reqtable td:last-child{text-align:right;color:var(--accent-2);font-weight:700}
@@ -97,9 +105,12 @@
   .ctrls{display:flex;flex-direction:column;gap:9px}
   .grp-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin:6px 0 2px}
   button.act{font:inherit;cursor:pointer;text-align:left;border:1px solid var(--line);background:var(--surface-2);color:var(--text);
-    border-radius:10px;padding:11px 13px;font-size:13.5px;transition:.18s var(--ease);display:flex;align-items:center;gap:10px}
+    border-radius:10px;padding:10px 13px;font-size:13.5px;transition:.18s var(--ease);display:flex;align-items:center;gap:10px}
   button.act:hover:not(:disabled){border-color:var(--accent);transform:translateY(-1px)}
-  button.act .tick{margin-left:auto;color:var(--accent-2);opacity:0;transition:.2s}
+  button.act .al{display:flex;flex-direction:column;gap:1px;flex:1}
+  button.act .al b{font-weight:600}
+  button.act .ad{font-size:11.5px;color:var(--muted);line-height:1.3}
+  button.act .tick{margin-left:auto;color:var(--accent-2);opacity:0;transition:.2s;flex:0 0 auto}
   button.act.chosen{border-color:var(--accent-2);background:oklch(30% .09 155 /.3)}
   button.act.chosen .tick{opacity:1}
   button.act.badpick{border-color:var(--danger);background:oklch(30% .1 25 /.28)}
@@ -132,7 +143,7 @@
   .resultcard .big{font-size:46px;font-weight:800;color:var(--accent-2);line-height:1}
   .resultcard .lbl{color:var(--muted);font-size:13px;margin:6px 0 14px}
   .stresslegend{display:flex;gap:6px;justify-content:center;font-size:11px;color:var(--muted);margin-top:8px}
-  .grade{font-size:46px;font-weight:800;line-height:1}
+  .grade{font-size:42px;font-weight:800;line-height:1.1}
   @media(prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 </head>
@@ -143,7 +154,7 @@
       <div class="logo">CB</div>
       <div>
         <h1>CML-Bench® · Сценарий обучения</h1>
-        <p>«Первое виртуальное испытание узла» — пройдите задачу самостоятельно</p>
+        <p>«Первое виртуальное испытание узла» — реши задачу по ТЗ</p>
       </div>
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
@@ -154,6 +165,17 @@
       <div class="badge">Макет · Claude Code</div>
     </div>
   </header>
+
+  <!-- ТЗ кейса: основа для всех решений, видно всегда -->
+  <div class="brief">
+    <span class="bk">ТЗ кейса</span>Кронштейн крепления, нагружен изгибом. Закреплён <b>одним концом — фланцем на болтах</b> (жёстко). Нужно проверить прочность виртуальным расчётом.
+    <div class="spec">
+      <span>Объект: <b>кронштейн</b></span>
+      <span>Рабочая нагрузка по ТЗ: <b>сила 7 кН</b></span>
+      <span>Крепление: <b>жёсткое (фланец)</b></span>
+      <span>Требования: <b>запас ≥ 1.5</b>, <b>масса ≤ 12 кг</b></span>
+    </div>
+  </div>
 
   <div class="progress"><i id="bar"></i></div>
 
@@ -190,7 +212,6 @@ const TREE = [
   {id:"run",  ic:"▶", name:"Запуск и результат"},
 ];
 const CHAIN_ORDER = ["Препроцессинг","Решатель","Постобработка"];
-
 const S = {step:0, mode:"learn", reqs:[], model:null, load:null, bc:null, chain:[], ran:false, decided:false, errors:0, flagged:new Set()};
 
 const bar=document.getElementById("bar");
@@ -200,18 +221,16 @@ const right=document.getElementById("rightPanel");
 const stageTitle=document.getElementById("stageTitle");
 const statusbar=document.getElementById("statusbar");
 const statusText=document.getElementById("statusText");
-const TOTAL=TREE.length+1;
 const isExam=()=>S.mode==="control";
 
 function resetScenario(){Object.assign(S,{step:0,reqs:[],model:null,load:null,bc:null,chain:[],ran:false,decided:false,errors:0,flagged:new Set()});}
 document.querySelectorAll("#modeToggle button").forEach(b=>b.onclick=()=>{
-  if(S.mode===b.dataset.mode) { resetScenario(); render(); return; }
+  if(S.mode===b.dataset.mode){resetScenario();render();return;}
   S.mode=b.dataset.mode;
   document.querySelectorAll("#modeToggle button").forEach(x=>x.classList.toggle("on",x.dataset.mode===S.mode));
   resetScenario();render();
 });
-
-function logErr(key){ if(!S.flagged.has(key)){S.flagged.add(key);S.errors++;} }
+function logErr(key){if(!S.flagged.has(key)){S.flagged.add(key);S.errors++;}}
 
 function nodeSVG(opts={}){
   const load=opts.load, bc=opts.bc, stress=opts.stress;
@@ -230,7 +249,7 @@ function nodeSVG(opts={}){
 }
 function renderTree(){
   treeEl.innerHTML=TREE.map((n,i)=>{
-    const cls = i===S.step ? "active" : i<S.step ? "done" : "locked";
+    const cls=i===S.step?"active":i<S.step?"done":"locked";
     return `<li class="${cls}"><span class="ic">${n.ic}</span>${n.name}</li>`;
   }).join("");
 }
@@ -243,25 +262,23 @@ function setStatus(state,text,pct){
 }
 function checklist(){
   const items=[
-    ["Требования занесены", S.reqs.length>=2 && S.reqs.includes("Запас прочности")],
-    ["Модель загружена", !!S.model],
-    ["Нагрузка и ГУ заданы", S.load==="7 кН" && S.bc==="заделка"],
-    ["Цепочка собрана", S.chain.length===3],
+    ["Требования по ТЗ занесены", S.reqs.length===2 && S.reqs.includes("Запас прочности") && S.reqs.includes("Масса узла")],
+    ["Загружена модель кронштейна", S.model==="Кронштейн_v1"],
+    ["Нагрузка и крепление по ТЗ", S.load==="7 кН" && S.bc==="заделка"],
+    ["Цепочка собрана верно", S.chain.length===3],
     ["Испытание проведено", S.ran],
   ];
-  const ec = isExam()? `<div class="errcount">Ошибок пока: ${S.errors}</div>`:"";
+  const ec=isExam()?`<div class="errcount">Ошибок пока: ${S.errors}</div>`:"";
   return `<ul class="checklist">${items.map(([t,d])=>`<li class="${d?"done":""}">${t}</li>`).join("")}</ul>${ec}`;
 }
-
 function render(){
   renderTree();
   bar.style.width=((S.step)/(TREE.length))*100+"%";
   [stepReq,stepModel,stepLoads,stepChain,stepRun,stepDone][S.step]();
 }
-
 function rightShell(title,hint,ctrlsHTML,canNext){
-  const hintBlock = isExam()
-    ? `<div class="examnote"><span class="hi">◉</span><span>Режим контроля: подсказок нет, ошибки засчитываются.</span></div>`
+  const hintBlock=isExam()
+    ? `<div class="examnote"><span class="hi">◉</span><span>Контроль: подсказок нет. Решай по <b>ТЗ кейса</b> вверху и параметрам вариантов. Ошибки засчитываются.</span></div>`
     : (hint?`<div class="hint"><span class="hi">💡</span><span>${hint}</span></div>`:"");
   right.innerHTML=`
     <div class="stepk">Шаг ${Math.min(S.step+1,5)} / 5 · ${isExam()?"контроль":"обучение"}</div>
@@ -278,121 +295,128 @@ function rightShell(title,hint,ctrlsHTML,canNext){
   document.getElementById("next").onclick=canNext;
 }
 function msg(t,ok){const m=document.getElementById("msg");if(!m)return;m.className="msg "+(ok?"ok":"err");m.textContent=t;}
-// feedback for a wrong choice: learn explains, exam stays terse
-function wrong(key,learnText){ logErr(key); msg(isExam()? "✗ Ошибка зафиксирована." : "✗ "+learnText); if(isExam()) updateErr(); }
-function updateErr(){const e=right.querySelector(".errcount"); if(e) e.textContent="Ошибок пока: "+S.errors;}
+function wrong(key,why){logErr(key);msg(isExam()?"✗ Не по ТЗ. Ошибка зафиксирована.":"✗ "+why);if(isExam())updateErr();}
+function updateErr(){const e=right.querySelector(".errcount");if(e)e.textContent="Ошибок пока: "+S.errors;}
+function opt(o){return `<span class="al"><b>${o.t}</b>${o.d?`<span class="ad">${o.d}</span>`:""}</span><span class="tick">✓</span>`;}
 
-/* ---- STEP 1: requirements (multi-add, with decoy) ---- */
+/* STEP 1 — требования: занеси РОВНО то, что в ТЗ (масса+запас). Ресурс и цвет в ТЗ не заданы. */
+const REQVAL={"Масса узла":"≤ 12.0 кг","Запас прочности":"≥ 1.5"};
 function stepReq(){
   stageTitle.textContent="Матрица требований";
   viewport.innerHTML=`<div class="vp-grid"></div>`+(S.reqs.length
-    ? `<table class="reqtable">${S.reqs.map(n=>`<tr><td>${n}</td><td>${REQVAL[n]||""}</td></tr>`).join("")}</table>`
-    : `<div class="empty">Требования не заданы. Добавьте справа →</div>`);
+    ? `<table class="reqtable">${S.reqs.map(n=>`<tr><td>${n}</td><td>${REQVAL[n]||"—"}</td></tr>`).join("")}</table>`
+    : `<div class="empty">Перенеси в матрицу требования из ТЗ кейса (вверху).</div>`);
   const opts=[
-    {n:"Масса узла",ok:true},{n:"Запас прочности",ok:true},{n:"Ресурс",ok:true},
-    {n:"Цвет корпуса",ok:false}
+    {n:"Масса узла",t:"Масса узла · ≤ 12.0 кг",d:"числовой целевой показатель",ok:true},
+    {n:"Запас прочности",t:"Запас прочности · ≥ 1.5",d:"числовой целевой показатель",ok:true},
+    {n:"Ресурс",t:"Ресурс · ≥ 10⁶ циклов",d:"числовой целевой показатель",ok:false},
+    {n:"Цвет корпуса",t:"Цвет корпуса",d:"требование к окраске",ok:false},
   ];
-  const ctrls=opts.map((o,i)=>{
-    const chosen=S.reqs.includes(o.n);
-    return `<button class="act ${chosen?"chosen":""}" data-i="${i}">${o.n}${REQVAL[o.n]?` · <span style="color:var(--accent-2)">${REQVAL[o.n]}</span>`:""}<span class="tick">✓</span></button>`;
-  }).join("");
-  rightShell("Занесите требования",
-    "Добавьте минимум 2 целевых показателя, обязательно «Запас прочности ≥ 1.5». Лишнее (напр. цвет) — не инженерное требование.",
+  const ctrls=opts.map((o,i)=>`<button class="act ${S.reqs.includes(o.n)?"chosen":""}" data-i="${i}">${opt(o)}</button>`).join("");
+  rightShell("Занеси требования из ТЗ",
+    "Перенеси в матрицу ровно те показатели, что заданы в ТЗ кейса выше — масса и запас. Чего в ТЗ нет, не добавляй.",
     ctrls, ()=>{
-      if(!S.reqs.includes("Запас прочности")) return msg(isExam()?"Проверьте состав требований.":"Без «Запаса прочности» нечего оценивать в конце.");
-      if(S.reqs.length<2) return msg(isExam()?"Недостаточно требований.":"Добавьте минимум 2 требования.");
+      const okSet=S.reqs.includes("Масса узла")&&S.reqs.includes("Запас прочности")&&S.reqs.length===2;
+      if(!okSet) return msg(isExam()?"Состав требований не совпадает с ТЗ.":"В ТЗ заданы масса и запас — ровно их и занеси.");
       S.step=1;render();
     });
   right.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{
     const o=opts[+b.dataset.i];
-    if(!o.ok){ wrong("req:"+o.n, "«"+o.n+"» — не расчётное требование, не добавляйте."); return; }
-    const ix=S.reqs.indexOf(o.n); if(ix>=0)S.reqs.splice(ix,1); else S.reqs.push(o.n);
+    if(!o.ok){wrong("req:"+o.n,"«"+o.n+"» в ТЗ кейса не задано — не заноси.");return;}
+    const ix=S.reqs.indexOf(o.n);if(ix>=0)S.reqs.splice(ix,1);else S.reqs.push(o.n);
     stepReq();
   });
 }
-const REQVAL={"Масса узла":"≤ 12.0 кг","Запас прочности":"≥ 1.5","Ресурс":"≥ 10⁶ циклов"};
 
-/* ---- STEP 2: model (pick one of three) ---- */
+/* STEP 2 — модель: ТЗ про кронштейн → грузим кронштейн */
 function stepModel(){
   stageTitle.textContent="Цифровой макет (DMU)";
-  viewport.innerHTML=`<div class="vp-grid"></div>`+(S.model==="Кронштейн_v1"?nodeSVG():`<div class="empty">${S.model?("Загружена не та модель: "+S.model):"Модель не загружена"}</div>`);
+  viewport.innerHTML=`<div class="vp-grid"></div>`+(S.model==="Кронштейн_v1"?nodeSVG():`<div class="empty">${S.model?("Это не тот объект: «"+S.model+"». В ТЗ — кронштейн."):"Модель не загружена"}</div>`);
   const opts=[
-    {n:"Кронштейн_v1",ok:true},
-    {n:"Корпус_редуктора",ok:false},
-    {n:"Пустой шаблон",ok:false},
+    {n:"Кронштейн_v1",t:"Кронштейн_v1",d:"модель кронштейна",ok:true},
+    {n:"Корпус_редуктора",t:"Корпус_редуктора",d:"модель корпуса редуктора",ok:false},
+    {n:"Балка_тест",t:"Балка_тест",d:"учебная балка-заглушка",ok:false},
   ];
-  const ctrls=opts.map((o,i)=>`<button class="act ${S.model===o.n?(o.ok?"chosen":"badpick"):""}" data-i="${i}">Загрузить: ${o.n}<span class="tick">✓</span></button>`).join("");
-  rightShell("Загрузите расчётную модель",
-    "Для этого кейса нужен «Кронштейн_v1». Другие модели не соответствуют требованиям.",
-    ctrls, ()=>{ if(S.model!=="Кронштейн_v1") return msg(isExam()?"Загружена неверная модель.":"Нужна модель «Кронштейн_v1»."); S.step=2;render(); });
+  const ctrls=opts.map((o,i)=>`<button class="act ${S.model===o.n?(o.ok?"chosen":"badpick"):""}" data-i="${i}">${opt(o)}</button>`).join("");
+  rightShell("Загрузи модель по ТЗ",
+    "В ТЗ объект — кронштейн. Загрузи модель того же объекта, а не похожую деталь.",
+    ctrls, ()=>{ if(S.model!=="Кронштейн_v1") return msg(isExam()?"Модель не соответствует объекту ТЗ.":"В ТЗ объект — кронштейн."); S.step=2;render(); });
   right.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{
     const o=opts[+b.dataset.i];
-    if(!o.ok){ S.model=o.n; wrong("model:"+o.n,"«"+o.n+"» не подходит под кейс — нужен кронштейн."); stepModelMark(); return; }
-    S.model=o.n; msg("Модель загружена и привязана к проекту.",true); stepModel();
+    S.model=o.n;
+    if(!o.ok){wrong("model:"+o.n,"В ТЗ объект — кронштейн, а не «"+o.n+"».");}
+    else msg("Модель кронштейна загружена.",true);
+    stepModel();
   });
 }
-function stepModelMark(){ stepModel(); }
 
-/* ---- STEP 3: loads + BC (two pick-one groups, with wrong options) ---- */
+/* STEP 3 — нагрузка и крепление строго по ТЗ (7 кН, жёсткая заделка) */
 function stepLoads(){
   stageTitle.textContent="Нагрузки и граничные условия";
   viewport.innerHTML=`<div class="vp-grid"></div>`+nodeSVG({load:S.load==="7 кН",bc:S.bc==="заделка"});
-  const loads=[{n:"7 кН",ok:true},{n:"70 кН",ok:false},{n:"Момент 5 Н·м",ok:false}];
-  const bcs=[{n:"заделка",ok:true},{n:"шарнир",ok:false},{n:"без закрепления",ok:false}];
-  const grp=(title,arr,sel,kind)=>`<div class="grp-label">${title}</div>`+arr.map((o,i)=>
-    `<button class="act ${sel===o.n?(o.ok?"chosen":"badpick"):""}" data-kind="${kind}" data-i="${i}">${kind==="load"?"Нагрузка":"ГУ"}: ${o.n}<span class="tick">✓</span></button>`).join("");
-  const ctrls=grp("Нагрузка",loads,S.load,"load")+grp("Закрепление",bcs,S.bc,"bc");
-  rightShell("Задайте нагрузку и закрепление",
-    "Нужны ОБА верных: сила 7 кН и заделка. Нагрузка без закрепления = деталь не зафиксирована, расчёт не сойдётся.",
+  const loads=[
+    {n:"7 кН",t:"Сила 7 кН",d:"сосредоточенная сила величиной 7 кН",ok:true},
+    {n:"70 кН",t:"Сила 70 кН",d:"сосредоточенная сила величиной 70 кН",ok:false},
+    {n:"Момент 5 Н·м",t:"Момент 5 Н·м",d:"изгибающий момент 5 Н·м",ok:false},
+  ];
+  const bcs=[
+    {n:"заделка",t:"Заделка",d:"жёсткое защемление: ни перемещений, ни поворота",ok:true},
+    {n:"шарнир",t:"Шарнир",d:"опора с возможностью поворота",ok:false},
+    {n:"без закрепления",t:"Без закрепления",d:"перемещения детали ничем не ограничены",ok:false},
+  ];
+  const grp=(arr,sel,kind)=>arr.map((o,i)=>`<button class="act ${sel===o.n?(o.ok?"chosen":"badpick"):""}" data-kind="${kind}" data-i="${i}">${opt(o)}</button>`).join("");
+  const ctrls=`<div class="grp-label">Нагрузка</div>`+grp(loads,S.load,"load")+`<div class="grp-label">Закрепление</div>`+grp(bcs,S.bc,"bc");
+  rightShell("Задай нагрузку и крепление по ТЗ",
+    "Сверь с ТЗ: нагрузка и тип крепления указаны там. Описание под каждым вариантом подскажет, какой соответствует ТЗ.",
     ctrls, ()=>{
-      if(S.load!=="7 кН"||S.bc!=="заделка") return msg(isExam()?"Условия заданы неверно.":"Нужны сила 7 кН и заделка.");
+      if(S.load!=="7 кН"||S.bc!=="заделка") return msg(isExam()?"Нагрузка/крепление не по ТЗ.":"В ТЗ: сила 7 кН и жёсткое крепление (заделка).");
       S.step=3;render();
     });
   right.querySelectorAll("[data-kind]").forEach(b=>b.onclick=()=>{
-    const kind=b.dataset.kind, arr=kind==="load"?loads:bcs, o=arr[+b.dataset.i];
-    if(kind==="load") S.load=o.n; else S.bc=o.n;
-    if(!o.ok){ wrong(kind+":"+o.n, o.n==="без закрепления"?"Без закрепления деталь не зафиксирована — расчёт не сойдётся.":"«"+o.n+"» не подходит для этого кейса."); stepLoadsMark(); }
-    else { msg("Принято: "+o.n,true); stepLoadsMark(); }
+    const kind=b.dataset.kind,arr=kind==="load"?loads:bcs,o=arr[+b.dataset.i];
+    if(kind==="load")S.load=o.n;else S.bc=o.n;
+    if(!o.ok)wrong(kind+":"+o.n,o.d+".");
+    else msg("Принято: "+o.t,true);
+    stepLoads();
   });
 }
-function stepLoadsMark(){ stepLoads(); }
 
-/* ---- STEP 4: chain order (with decoy block) ---- */
+/* STEP 4 — цепочка: порядок выводится из ФУНКЦИИ блоков (подготовка→расчёт→чтение) */
 function stepChain(){
   stageTitle.textContent="Сборка расчётной цепочки";
   viewport.innerHTML=`<div class="vp-grid"></div>`+(S.chain.length
     ? `<div class="chain-blocks">${S.chain.map((c,i)=>`${i?'<span class="cb-arrow">→</span>':''}<div class="cblock">${c}</div>`).join("")}</div>`
-    : `<div class="empty">Цепочка пуста. Соберите по порядку →</div>`);
+    : `<div class="empty">Собери цепочку по логике работы блоков (см. описания).</div>`);
   const next=CHAIN_ORDER[S.chain.length];
   const blocks=[
-    {n:"Препроцессинг",ok:true},{n:"Решатель",ok:true},{n:"Постобработка",ok:true},
-    {n:"Оптимизация",ok:false}
+    {n:"Препроцессинг",t:"Препроцессинг",d:"готовит сетку и граничные условия",ok:true},
+    {n:"Решатель",t:"Решатель",d:"вычисляет напряжения по подготовленной модели",ok:true},
+    {n:"Постобработка",t:"Постобработка",d:"формирует и читает результаты расчёта",ok:true},
+    {n:"Оптимизация",t:"Оптимизация",d:"перебор вариантов — отдельное исследование",ok:false},
   ];
-  const ctrls=blocks.map((b,i)=>{
-    const added=S.chain.includes(b.n);
-    return `<button class="act ${added?"chosen":""}" data-i="${i}" ${added?"disabled":""}>${b.n}<span class="tick">✓</span></button>`;
-  }).join("");
-  rightShell("Соберите цепочку по порядку",
-    "Строгий порядок: Препроцессинг → Решатель → Постобработка. «Оптимизация» в базовую цепочку не входит.",
-    ctrls, ()=>{ if(S.chain.length<3) return msg(isExam()?"Цепочка не собрана.":"Соберите три блока по порядку."); S.step=4;render(); });
+  const ctrls=blocks.map((b,i)=>{const added=S.chain.includes(b.n);
+    return `<button class="act ${added?"chosen":""}" data-i="${i}" ${added?"disabled":""}>${opt(b)}</button>`;}).join("");
+  rightShell("Собери цепочку по логике",
+    "Не угадывай порядок — выведи его из функции блоков: что готовит данные → что считает → что читает результат. Лишний блок исключи по его описанию.",
+    ctrls, ()=>{ if(S.chain.length<3) return msg(isExam()?"Цепочка не собрана.":"Собери три блока в логическом порядке."); S.step=4;render(); });
   right.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{
     const blk=blocks[+b.dataset.i];
-    if(!blk.ok){ wrong("chain:opt","«Оптимизация» не входит в базовую расчётную цепочку."); return; }
-    if(blk.n!==next){ wrong("chain:order:"+blk.n,"Сначала «"+next+"» — порядок цепочки важен."); return; }
-    S.chain.push(blk.n); stepChain();
+    if(!blk.ok){wrong("chain:opt","«Оптимизация» — отдельное исследование, в одиночный расчёт не входит.");return;}
+    if(blk.n!==next){wrong("chain:order:"+blk.n,"Сначала «"+next+"»: "+(next==="Препроцессинг"?"данные надо подготовить до расчёта":next==="Решатель"?"считать можно только после подготовки":"читать результат — после расчёта")+".");return;}
+    S.chain.push(blk.n);stepChain();
   });
 }
 
-/* ---- STEP 5: run + decision ---- */
+/* STEP 5 — решение: сравни результат с требованием ТЗ (оба на экране) */
 let runTimer=null;
 function stepRun(){
   stageTitle.textContent="Виртуальное испытание";
   if(!S.ran){
     viewport.innerHTML=`<div class="vp-grid"></div>`+nodeSVG({load:true,bc:true});
-    const ctrls=`<button class="act" id="runBtn">▶ Запустить на кластере (${S.chain.length} блока)<span class="tick">✓</span></button>`;
-    rightShell("Запустите расчёт",
-      "Цепочка уходит на HPC-кластер. Нажмите «Запустить» и дождитесь результата.",
-      ctrls, ()=>{ if(!S.ran) return msg(isExam()?"Расчёт не проведён.":"Запустите расчёт и дождитесь результата."); });
+    const ctrls=`<button class="act" id="runBtn"><span class="al"><b>▶ Запустить на кластере</b><span class="ad">прогон цепи из ${S.chain.length} блоков</span></span><span class="tick">✓</span></button>`;
+    rightShell("Запусти расчёт",
+      "Цепочка уходит на HPC-кластер. Нажми «Запустить» и дождись результата.",
+      ctrls, ()=>{ if(!S.ran) return msg(isExam()?"Расчёт не проведён.":"Запусти расчёт и дождись результата."); });
     document.getElementById("runBtn").onclick=startRun;
     setStatus("","Кластер: готов к запуску");
   } else { renderResult(); }
@@ -402,7 +426,7 @@ function startRun(){
   let p=0;setStatus("run","Кластер: расчёт…",0);
   viewport.innerHTML=`<div class="vp-grid"></div><div class="empty" id="runInfo">Расчёт напряжённо-деформированного состояния…</div>`;
   runTimer=setInterval(()=>{
-    p+=Math.max(4, Math.round((100-p)*0.12));
+    p+=Math.max(4,Math.round((100-p)*0.12));
     if(p>=100){p=100;clearInterval(runTimer);S.ran=true;setStatus("ok","Кластер: расчёт завершён");renderResult();}
     else setStatus("run",`Кластер: расчёт… ${p}%`,p);
     const ri=document.getElementById("runInfo");if(ri&&p<100)ri.textContent=`Решатель FEA · ${p}%`;
@@ -412,43 +436,42 @@ function renderResult(){
   viewport.innerHTML=`<div class="vp-grid"></div>`+nodeSVG({load:true,bc:true,stress:true})+
     `<div class="stresslegend" style="position:absolute;bottom:10px">низкие&nbsp;⟶&nbsp;высокие напряжения</div>`;
   const decideOpts=[
-    {n:"Вариант проходит ✓",ok:true},
-    {n:"Вариант не проходит ✗",ok:false},
+    {n:"pass",t:"Вариант проходит ✓",d:"выбрать, если запас ≥ требования",ok:true},
+    {n:"fail",t:"Вариант не проходит ✗",d:"выбрать, если запас < требования",ok:false},
   ];
-  const ctrls=`<div class="grp-label">Запас 1.62 при требовании ≥ 1.5 — ваше решение:</div>`+
-    decideOpts.map((o,i)=>`<button class="act ${S.decided&&o.ok?"chosen":""}" data-i="${i}" style="justify-content:center;font-weight:700">${o.n}</button>`).join("");
-  rightShell("Результат и решение",
-    "Запас 1.62 ≥ требования 1.5 → конструкция проходит. Выберите верное решение.",
-    `<div class="resultcard"><div class="big">1.62</div><div class="lbl">фактический запас прочности (требование ≥ 1.5)</div></div>`+ctrls,
-    ()=>{ if(!S.decided) return msg(isExam()?"Решение не принято.":"Примите верное решение по результату."); S.step=5;render(); });
+  const ctrls=`<div class="grp-label">Сравни результат с требованием ТЗ (запас ≥ 1.5):</div>`+
+    decideOpts.map((o,i)=>`<button class="act ${S.decided&&o.ok?"chosen":""}" data-i="${i}">${opt(o)}</button>`).join("");
+  rightShell("Прими решение по результату",
+    "Сравни фактический запас (1.62) с требованием ТЗ (≥ 1.5). Вывод следует из этого сравнения.",
+    `<div class="resultcard"><div class="big">1.62</div><div class="lbl">фактический запас · требование ТЗ ≥ 1.5</div></div>`+ctrls,
+    ()=>{ if(!S.decided) return msg(isExam()?"Решение не принято.":"Сравни 1.62 с 1.5 и выбери вывод."); S.step=5;render(); });
   setStatus("ok","Кластер: расчёт завершён · запас 1.62 ≥ 1.5");
   right.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{
     const o=decideOpts[+b.dataset.i];
-    if(!o.ok){ wrong("decide","1.62 ≥ 1.5 — вариант проходит, а не отклоняется."); return; }
-    S.decided=true; msg("Решение принято: запас 1.62 ≥ 1.5 — проходит. Жмите «Дальше».",true); renderResult();
+    if(!o.ok){wrong("decide","1.62 ≥ 1.5 — запас выше требования, значит вариант проходит.");return;}
+    S.decided=true;msg("Верно: 1.62 ≥ 1.5 — проходит. Жми «Дальше».",true);renderResult();
   });
 }
 
-/* ---- FINISH ---- */
+/* FINISH */
 function stepDone(){
   renderTree();bar.style.width="100%";
   stageTitle.textContent="Задача выполнена";
   if(isExam()){
-    const grades=[["Отлично (5)","var(--accent-2)"],["Хорошо (4)","var(--accent-2)"],["Удовлетворительно (3)","var(--warn)"]];
-    const g = S.errors<=0?grades[0]:S.errors===1?grades[1]:S.errors===2?grades[2]:["Требуется повторное обучение","var(--danger)"];
+    const g=S.errors<=0?["Отлично (5)","var(--accent-2)"]:S.errors===1?["Хорошо (4)","var(--accent-2)"]:S.errors===2?["Удовлетворительно (3)","var(--warn)"]:["Требуется повторное обучение","var(--danger)"];
     viewport.innerHTML=`<div class="vp-grid"></div><div style="text-align:center">
       <div class="grade" style="color:${g[1]}">${g[0]}</div>
-      <div style="color:var(--muted);font-size:13px;margin-top:8px">Ошибок: <b style="color:var(--text)">${S.errors}</b> · без подсказок</div></div>`;
+      <div style="color:var(--muted);font-size:13px;margin-top:8px">Ошибок: <b style="color:var(--text)">${S.errors}</b> · решено по ТЗ без подсказок</div></div>`;
     right.innerHTML=`
       <div class="stepk">Итог · контроль</div>
       <div class="righttitle">Оценка компетенции</div>
       ${checklist()}
-      <div class="examnote" style="margin-top:14px"><span class="hi">◉</span><span>Результат без подсказок: <b>${S.errors}</b> ошибок. Так модуль годится как проверка при онбординге.</span></div>
+      <div class="examnote" style="margin-top:14px"><span class="hi">◉</span><span>Каждое решение выводилось из ТЗ и параметров. <b>${S.errors}</b> ошибок — так модуль работает как проверка при онбординге.</span></div>
       <div class="nav">
         <button class="btn" id="toLearn">↩ В обучение</button>
         <button class="btn primary" id="restart">↻ Заново</button>
       </div>`;
-    document.getElementById("toLearn").onclick=()=>{document.querySelector('#modeToggle [data-mode="learn"]').click();};
+    document.getElementById("toLearn").onclick=()=>document.querySelector('#modeToggle [data-mode="learn"]').click();
     document.getElementById("restart").onclick=()=>{resetScenario();render();};
     setStatus("ok","Кластер: задача закрыта · ошибок "+S.errors);
     return;
@@ -456,18 +479,18 @@ function stepDone(){
   viewport.innerHTML=`<div class="vp-grid"></div><div style="text-align:center">
       <div style="font-size:50px">✓</div>
       <div style="font-size:18px;font-weight:700;margin-top:6px">Сценарий пройден</div>
-      <div style="color:var(--muted);font-size:13px;margin-top:6px">Первое виртуальное испытание проведено<br/>от требования до обоснованного решения</div>
+      <div style="color:var(--muted);font-size:13px;margin-top:6px">Каждый шаг ты вывел из ТЗ:<br/>объект, нагрузка, крепление, логика расчёта, решение</div>
     </div>`;
   right.innerHTML=`
     <div class="stepk">Итог · обучение</div>
     <div class="righttitle">Что вы освоили</div>
     ${checklist()}
-    <div class="examnote" style="margin-top:14px"><span class="hi">◉</span><span>Готовы? Переключитесь в <b>Контроль</b> — там подсказки скрыты, а ошибки оцениваются.</span></div>
+    <div class="examnote" style="margin-top:14px"><span class="hi">◉</span><span>Теперь попробуй <b>Контроль</b>: подсказок нет, но ТЗ и параметры на месте — решай сам, ошибки оцениваются.</span></div>
     <div class="nav">
       <button class="btn" id="toExam">▶ Режим контроля</button>
       <button class="btn primary" id="restart">↻ Заново</button>
     </div>`;
-  document.getElementById("toExam").onclick=()=>{document.querySelector('#modeToggle [data-mode="control"]').click();};
+  document.getElementById("toExam").onclick=()=>document.querySelector('#modeToggle [data-mode="control"]').click();
   document.getElementById("restart").onclick=()=>{resetScenario();render();};
   setStatus("ok","Кластер: задача закрыта");
 }
